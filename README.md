@@ -1,2 +1,2 @@
-# yggdrasill
+# project yggdrasill
 kg build
