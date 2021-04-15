@@ -2,11 +2,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/ipcis_nvhlclm?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
-    username: axtest
-    password: 'axtest123'
-    #url: jdbc:mysql://10.10.8.2:3306/claimdb?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
-    #username: axclaim
-    #password: 'cxIIy890'
+    username: add
+    password: 'add'
     driver-class-name: com.mysql.jdbc.Driver
     maximum-pool-size: 15
     #测试库连接超时时间过短，需要将存活时间调低

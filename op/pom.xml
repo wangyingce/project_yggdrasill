@@ -241,7 +241,7 @@
     </dependencies>
 
     <build>
-        <finalName>yggdrasill-alpha0</finalName>
+        <finalName>ygg-0</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
