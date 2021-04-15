@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+    <classPathEntry location="D:/mysql-connector-java-5.1.47/mysql-connector-java-5.1.47.jar"/>
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="useMapperCommentGenerator" value="true"/>
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <property name="caseSensitive" value="true"/>
+            <property name="forceAnnotation" value="true"/>
+            <property name="generateColumnConsts" value="true"/>
+            <property name="generateDefaultInstanceMethod" value="true"/>
+            <property name="beginningDelimiter" value="`"/>
+            <property name="endingDelimiter" value="`"/>
+            <!--使用 Data 时，Getter,Setter 无效-->
+            <property name="lombok" value="Getter,Setter,Data,ToString,Accessors,EqualsAndHashCode"/>
+        </plugin>
+        <jdbcConnection userId="axtest" password="axtest123" driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.9.5:3306/ipcis_nvhlclm?useUnicode=true&amp;characterEncoding=utf-8"/>
+
+        <!--生成Java entity-->
+        <javaModelGenerator targetPackage="cc.leevi.webbase.model" targetProject="F:/AEIT/web-base/src/main/java">
+        </javaModelGenerator>
+
+        <!--生成Mybatis Mapper Xml-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="F:/AEIT/web-base/src/main/resources">
+        </sqlMapGenerator>
+
+        <!--生成Mybatis Mapper java接口-->
+        <javaClientGenerator targetPackage="cc.leevi.webbase.mapper" type="XMLMAPPER" targetProject="F:/AEIT/web-base/src/main/java">
+        </javaClientGenerator>
+
+        <!-- <table tableName="t_user" domainObjectName="User"/>-->
+         <table tableName="web_clm_accdnt" domainObjectName="Accdnt"/>
+         <table tableName="WEB_CLM_RPT" domainObjectName="Rpt"/>
+         <table tableName="WEB_CLM_PLY_BASE" domainObjectName="Base"/>
+         <table tableName="WEB_CLM_BANK" domainObjectName="Bank"/>
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,33 @@
+#开发环境
+spring:
+  datasource:
+    url: jdbc:mysql://10.0.9.5:3306/ipcis_nvhlclm?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    username: axtest
+    password: 'axtest123'
+    driver-class-name: com.mysql.jdbc.Driver
+    maximum-pool-size: 15
+    #测试库连接超时时间过短，需要将存活时间调低
+    #连接最大生存时间，连接创建后最大的存活时间，active/idle 时间都算存活时间，跟idle-time不同（使用中的连接不会被移除）
+    #max-lifetime需要比idle-timeout大1s以上
+    #默认1800000ms，最低30000ms，若低于最低值会被重置为默认值
+    max-lifetime: 30000
+    #默认600000ms，最低10000ms，若低于最低值会被重置为默认值
+    idle-timeout: 20000
+  servlet:
+  multipart:
+    max-file-size: 2MB
+
+neo4j:
+  datasource:
+    url: jdbc:neo4j:bolt://localhost:7687
+    username: neo4j
+    password: 'neo4j'
+    driver-class-name: org.neo4j.jdbc.Driver
+    maximum-pool-size: 15
+    #测试库连接超时时间过短，需要将存活时间调低
+    #连接最大生存时间，连接创建后最大的存活时间，active/idle 时间都算存活时间，跟idle-time不同（使用中的连接不会被移除）
+    #max-lifetime需要比idle-timeout大1s以上
+    #默认1800000ms，最低30000ms，若低于最低值会被重置为默认值
+    max-lifetime: 30000
+    #默认600000ms，最低10000ms，若低于最低值会被重置为默认值
+    idle-timeout: 20000

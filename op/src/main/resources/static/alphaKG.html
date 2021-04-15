@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AlphaKG</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;margin:0;}</style>
+</head>
+<body>
+<div id="mountNode">
+    <svg style="position: absolute; overflow: visible;padding: 10px;width: 85px;">
+        <g class="legendCells">
+            <g class="cell" transform="translate(0, 0)">
+                <text class="label" id="warn" transform="translate( 15, 5)"style="fill:#AAAAAA" >操作提示：鼠标放置节点、关系线上时可以显示内容，按住左键于空白处可拖拽屏幕，节点颜色代表的属性请见屏幕右下角。</text>
+            </g>
+        </g>
+    </svg>
+    <svg style="position: absolute; overflow: visible; padding: 10px; top: 461px; left: 1251px; width: 85px; height: 200px;">
+        <g class="legendCells">
+            <g class="cell" transform="translate(0, 0)">
+                <circle class="swatch" r="10" style="fill:#2f4554;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">被保险人</text></g>
+            <g class="cell" transform="translate(0, 29)">
+                <circle class="swatch" r="10" style="fill:#6e7074;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">保单号</text></g>
+            <g class="cell" transform="translate(0, 58)">
+                <circle class="swatch" r="10" style="fill:#ca8622;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">赔案号</text></g>
+            <g class="cell" transform="translate(0, 87)">
+                <circle class="swatch" r="10" style="fill:#bda29a;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">收款人</text></g>
+            <g class="cell" transform="translate(0, 116)">
+                <circle class="swatch" r="10" style="fill:#619fa7;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">银行卡</text></g>
+            <g class="cell" transform="translate(0, 145)">
+                <circle class="swatch" r="10" style="fill:#cd7e62;stroke:rgb(255,255,255); "></circle>
+                <text class="label" transform="translate( 15, 5)"style="fill:#1E1E1E">报案电话</text></g>
+        </g>
+    </svg>
+</div>
+<script src="js/common.js"></script>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.0.2/build/g6.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/lib/jquery-3.2.1.min.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/assets/lib/d3-4.13.0.min.js"></script>
+<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.0.2/build/minimap.js"></script>
+<style>
+    .g6-tooltip {
+        border: 1px solid #676767;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #FCFCFC;
+        background-color: rgba(66,66,66,0.8);
+        padding: 10px 8px;
+    }
+    .g6-minimap {
+        position: absolute;
+        right: 0;
+        top: 6px;
+        background-color: #fff;
+    }
+</style>
+<script>
+//$("#mountNode").css('backgroundColor', '#f3f3f3');
+//$("#mountNode").css('backgroundColor', '#333333');
+var minimap = new Minimap({
+    size: [window.innerWidth / 4, window.innerHeight / 4]
+});
+    var graph = new G6.Graph({
+        container: 'mountNode',
+        width: window.innerWidth,
+        height: window.innerHeight,
+        plugins: [minimap],
+        autoPaint: false,
+        modes: {
+            default: ['drag-canvas', {
+                type: 'tooltip',
+                formatText: function formatText(model) {
+                    return model.type+"："+model.name;
+                }
+            }, {
+                type: 'edge-tooltip',
+                formatText: function formatText(model, e) {
+                    var smn = "（"+e.item.getSource().getModel().type+"）"+e.item.getSource().getModel().name;
+                    var tmn = "（"+e.item.getTarget().getModel().type+"）"+e.item.getTarget().getModel().name;
+                    return '来源：' + smn + '<br/>去向：' + tmn;
+                }
+            }]
+        },
+        nodeStyle: {
+            default: {
+                lineWidth: 2
+            },
+            highlight: {
+                opacity: 1
+            },
+            dark: {
+                opacity: 0.2
+            }
+        },
+        edgeStyle: {
+            default: {
+                stroke: '#e2e2e2',
+                lineAppendWidth: 2
+            },
+            highlight: {
+                stroke: '#999'
+            }
+        }
+    });
+
+    function clearAllStats() {
+        graph.setAutoPaint(false);
+        graph.getNodes().forEach(function(node) {
+            graph.clearItemStates(node);
+        });
+        graph.getEdges().forEach(function(edge) {
+            graph.clearItemStates(edge);
+        });
+        graph.paint();
+        graph.setAutoPaint(true);
+    }
+    graph.on('node:mouseenter', function(e) {
+        var item = e.item;
+        graph.setAutoPaint(false);
+        graph.getNodes().forEach(function(node) {
+            graph.clearItemStates(node);
+            graph.setItemState(node, 'dark', true);
+        });
+        graph.setItemState(item, 'dark', false);
+        graph.setItemState(item, 'highlight', true);
+        graph.getEdges().forEach(function(edge) {
+            if (edge.getSource() === item) {
+                graph.setItemState(edge.getTarget(), 'dark', false);
+                graph.setItemState(edge.getTarget(), 'highlight', true);
+                graph.setItemState(edge, 'highlight', true);
+                edge.toFront();
+            } else if (edge.getTarget() === item) {
+                graph.setItemState(edge.getSource(), 'dark', false);
+                graph.setItemState(edge.getSource(), 'highlight', true);
+                graph.setItemState(edge, 'highlight', true);
+                edge.toFront();
+            } else {
+                graph.setItemState(edge, 'highlight', false);
+            }
+        });
+        graph.paint();
+        graph.setAutoPaint(true);
+    });
+    graph.on('node:mouseleave', clearAllStats);
+    graph.on('canvas:click', clearAllStats);
+    $.getJSON(window.location.protocol+"//"+window.location.host+"/visionAllData?insuredName="+getArgsFromHref(window.location.href,"insuredName")+"&insuredCode="+getArgsFromHref(window.location.href,"insuredCode")+"&registNo="+getArgsFromHref(window.location.href,"registNo"), function(data) {
+        graph.data({
+            nodes: data.nodes,
+            edges: data.edges.map(function(edge, i) {
+                edge.id = 'edge' + i;
+                return Object.assign({}, edge);
+            })
+        });
+        var simulation = d3.forceSimulation().force("link", d3.forceLink().id(function(d) {
+            return d.id;
+        }).strength(0.5)).force("charge", d3.forceManyBody()).force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
+        simulation.nodes(data.nodes).on("tick", ticked);
+        simulation.force("link").links(data.edges);
+
+        graph.render();
+
+        function ticked() {
+            graph.refreshPositions();
+            graph.paint();
+        }
+    });
+</script>
+</body>
+</html>
