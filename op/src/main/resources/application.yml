@@ -1,7 +1,7 @@
 #开发环境
 spring:
   datasource:
-    url: jdbc:mysql://10.0.9.5:3306/ipcis_nvhlclm?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
+    url: jdbc:mysql://localhost:3306/ipcis_nvhlclm?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
     username: axtest
     password: 'axtest123'
     #url: jdbc:mysql://10.10.8.2:3306/claimdb?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true
