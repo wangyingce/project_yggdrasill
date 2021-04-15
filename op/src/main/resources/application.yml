@@ -20,7 +20,6 @@ spring:
 neo4j:
   datasource:
     url: jdbc:neo4j:bolt://localhost:7687
-    #url: jdbc:neo4j:bolt://10.0.0.219:7687
     username: neo4j
     password: 'remark'
     driver-class-name: org.neo4j.jdbc.Driver
@@ -33,5 +32,4 @@ neo4j:
     #默认600000ms，最低10000ms，若低于最低值会被重置为默认值
     idle-timeout: 600000
 
-rangeUrl: http://10.0.0.25:8765/uncar/claim/form/csv/downloadData/range/
-#rangeUrl: http://10.6.6.118:8765/uncar/claim/form/csv/downloadData/range/
+rangeUrl: http://localhost:8765/uncar/claim/form/csv/downloadData/range/
