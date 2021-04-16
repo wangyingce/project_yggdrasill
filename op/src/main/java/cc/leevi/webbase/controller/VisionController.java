@@ -1,9 +1,10 @@
 package cc.leevi.webbase.controller;
 
+import cc.leevi.webbase.constants.KGConstants;
 import cc.leevi.webbase.service.KgFusionService;
 import cc.leevi.webbase.service.KgInferenceService;
 import cc.leevi.webbase.service.KgVisionService;
-import cc.leevi.webbase.utils.OperBase1Utils;
+import cc.leevi.webbase.constants.KGConstants;
 import cc.leevi.webbase.utils.TokenUtils;
 import cc.leevi.webbase.vo.KgspInfoVo;
 import cc.leevi.webbase.vo.KgspVo;
@@ -35,7 +36,8 @@ public class VisionController {
     private KgFusionService kgFusionService;
     private Map<String,String> nodeIdMap =new HashMap<String,String>(0);//去重节点id
     private Map<String,String> edgeIdMap =new HashMap<String,String>(0);//去重关系id
-
+    Map<String, String> nodeTypeMap = new HashMap <>();
+    Integer nodeColor = 1;
 
     @GetMapping("showGraph")
     public Object showGraph(String insuredName, String insuredCode, String token) throws Exception{
@@ -93,7 +95,6 @@ public class VisionController {
         Map<String, String> message = new HashedMap();
         Map<String, List<Map<String, Object>>> stdjsMap = new HashedMap();
         List<Map<String, Object>> allTemplateData = kgVisionService.findAllDataByTemplateName(templateName);
-//        List<Map<String, Object>> allTemplateData = kgVisionService.findAllDataByInsuredName("袁军", "370983198012241814");
         if (allTemplateData == null || allTemplateData.size() <= 0) {
             message.put("error", "error:为查询到任何数据");
             return toJSON(message);
@@ -112,6 +113,8 @@ public class VisionController {
                 }
             }
         }
+        nodeIdMap.clear();
+        edgeIdMap.clear();
         return toJSON(stdjsMap);
     }
 
@@ -123,20 +126,31 @@ public class VisionController {
             String nodeValue = inputJson.get("name").toString();
             String nodeId = inputJson.get("_id").toString();
             Map<String, Object> nodeMap = new HashMap <>();
+
             /**ID去重判断*/
             if(nodeIdMap.get("id")==null||"".equals(nodeIdMap.get("id"))||nodeIdMap.get("id").indexOf("["+nodeId+"]")<0){
+                /**样式定义*/
+                Map<String, Object> styles = new HashMap <>();
+                styles.put("stroke","#fff");//node边框颜色
                 /**非重复更新ID记录数据*/
                 nodeIdMap.put("id",nodeIdMap.get("id")+"["+nodeId+"]");
                 nodeMap.put("id",nodeId);
-                /**节点通用样式定义*/
-                Map<String, Object> styles = new HashMap <>();
-                styles.put("stroke","#fff");//node边框颜色
-                nodeMap.put("size","20");//node大小
                 /**节点通用属性定义*/
                 nodeMap.put("name",nodeValue);
                 nodeMap.put("type",nodeType);
+                if(nodeTypeMap.get(nodeType)==null){
+                    nodeTypeMap.put(nodeType, KGConstants.NodeColorMap.get(nodeColor));
+                    styles.put("fill",nodeTypeMap.get(nodeType));
+                    nodeColor = nodeColor + 1;
+                }else{
+                    styles.put("fill",nodeTypeMap.get(nodeType));
+                }
                 Map<String, Object> propertiesMap = new HashMap <>();
                 propertiesMap.put("name",nodeValue);
+
+                nodeMap.put("style",styles);
+                nodeMap.put("properties",propertiesMap);
+
                 /**第一次遍历新增，其他更新或添加*/
                 if(stdjsTopMap.get("nodes")!=null&&!"".equals(stdjsTopMap.get("nodes"))){
                     stdjsTopMap.get("nodes").add(nodeMap);
