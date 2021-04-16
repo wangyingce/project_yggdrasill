@@ -209,6 +209,10 @@ public class OperBase1Utils{
         return "match (a1:被保险人{身份证号:'"+insuredCode+"'}) return a1.name as 姓名,a1.身份证号 as 身份证号";
     }
 
+    public static String getNeo4jDataByTemplateName(String templateName) {
+        return "match dat=((na)-[*]->(nb)) return dat as d1";
+    }
+
 
 //    public static String getBase1StandJson(JSONObject inputJson,Integer base1NodeX,Integer base1NodeY) {
 //        /**分流节点与边*/

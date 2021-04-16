@@ -179,4 +179,8 @@ public class KgVisionService {
         Map <String, String> insMap = getResultValue(insListMap);
         return insMap;
     }
+
+    public List<Map<String, Object>> findAllDataByTemplateName(String templateName) {
+        return neo4jJdbcTemplate.queryForList(OperBase1Utils.getNeo4jDataByTemplateName(templateName));
+    }
 }

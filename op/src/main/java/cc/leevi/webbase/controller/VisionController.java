@@ -87,74 +87,160 @@ public class VisionController {
 //        String kkk = String.valueOf(toJSON(kgspVo));
         return toJSON(kgspVo);
     }
-    /**
-     * 展示被保险人base-1模型图谱（neo4j to antV-G6）
-     * @param insCode
-     * @param insName
-     * @return
-     * @throws Exception
-     */
+
     @GetMapping("visionAllData")
-    public Object visionAllData(String token,String insCode, String insName) throws Exception {
-        Map<String, String> error = new HashedMap();//错误信息收集池
-        /**过滤无参数数据*/
-        if (!TokenUtils.base1TokenValid(token)) {
-            error.put("error", "error:错误的令牌");
-            return toJSON(error);
-        }else if (insCode == null || "".equals(insCode)) {
-            error.put("error", "error:缺少被保险人编号参数");
-            return toJSON(error);
-        }else if (insName == null || "".equals(insName)) {
-            error.put("error", "error:缺少被保险人姓名参数");
-            return toJSON(error);
-        }
+    public Object visionAllData(String templateName,String para2, String para3) throws Exception {
+        Map<String, String> message = new HashedMap();
         Map<String, List<Map<String, Object>>> stdjsMap = new HashedMap();
-        List<Map<String, Object>> informationMapList = new ArrayList<Map<String, Object>>();
-        /**加入被保险人、赔案、收款人、报案人统计*/
-        Map<String, Object> insuredMap = new HashMap<String, Object>();
-        Map<String, Object> claimMap = new HashMap<String, Object>();
-        Map<String, Object> payeeMap = new HashMap<String, Object>();
-        Map<String, Object> reportManMap = new HashMap<String, Object>();
-        /**查询被保险人关联的所有节点*/
-        List<Map<String, Object>> allRelationData = kgVisionService.findAllDataByInsuredName(insName, insCode);//过滤无效被保险人
-        if (allRelationData == null || allRelationData.size() <= 0) {
-            error.put("error", "error:未查询到被保险人对应的关联信息");
-            return toJSON(error);
+        List<Map<String, Object>> allTemplateData = kgVisionService.findAllDataByTemplateName(templateName);
+//        List<Map<String, Object>> allTemplateData = kgVisionService.findAllDataByInsuredName("袁军", "370983198012241814");
+        if (allTemplateData == null || allTemplateData.size() <= 0) {
+            message.put("error", "error:为查询到任何数据");
+            return toJSON(message);
         }
-        /**拆解neo4j的json数据 -data group层*/
-        String dataGroup = JSON.toJSONString(allRelationData);
+        String dataGroup = JSON.toJSONString(allTemplateData);
         JSONArray datasList = (JSONArray) JSONArray.parse(dataGroup);
         for(Object obj : datasList){
             JSONObject dataList = JSON.parseObject(String.valueOf(obj));
             Iterator iterator = dataList.keySet().iterator();
             while(iterator.hasNext()){
-                /**取出所有节点与边的json串*/
                 JSONArray jsonsList = dataList.getJSONArray(String.valueOf(iterator.next()));
                 for(Object json : jsonsList){
                     JSONObject inputJson = JSON.parseObject(String.valueOf(json));
                     /**将单个json串转换为antV-G6的格式*/
-                    getBase1StandJsonRe(stdjsMap,inputJson,nodeIdMap,edgeIdMap,insName,insuredMap,claimMap,payeeMap,reportManMap);
+                    getStandardJson(stdjsMap,inputJson);
                 }
             }
         }
-        nodeIdMap.clear();
-        edgeIdMap.clear();
-        /**加入信息MAP*/
-        Map<String,Object> ifmCypherMap = new HashMap<String,Object>();
-        String countNodeInfo = "关联被保险人"+(insuredMap.size()-1)+"个，关联赔案"+claimMap.size()+"个，关联收款人"+payeeMap.size()+"个，关联报案人"+reportManMap.size()+"个";
-        ifmCypherMap.put("cypher", OperBase1Utils.getAllNodeByNameT(insName,insCode));
-        ifmCypherMap.put("insured",insuredMap);
-        ifmCypherMap.put("claim",claimMap);
-        ifmCypherMap.put("payee",payeeMap);
-        ifmCypherMap.put("reportMan",reportManMap);
-        ifmCypherMap.put("countNodeInfo",countNodeInfo);
-        /**0-4类型的分析*/
-        Map<String,Object> hybridInferentialMap = kgInferenceService.hybridInferentialAnalysis(insName,insCode,ifmCypherMap);
-        informationMapList.add(hybridInferentialMap);
-        stdjsMap.put("informations",informationMapList);
-        /**推理分析部分*/
         return toJSON(stdjsMap);
     }
+
+    private void getStandardJson(Map<String, List<Map<String, Object>>> stdjsTopMap,JSONObject inputJson) {
+        /**分流数据类型*/
+        if(inputJson.containsKey("_labels")){
+            String nodeType = inputJson.get("_labels").toString();
+            nodeType = nodeType.substring(nodeType.indexOf("[")+2,nodeType.indexOf("]")-1);
+            String nodeValue = inputJson.get("name").toString();
+            String nodeId = inputJson.get("_id").toString();
+            Map<String, Object> nodeMap = new HashMap <>();
+            /**ID去重判断*/
+            if(nodeIdMap.get("id")==null||"".equals(nodeIdMap.get("id"))||nodeIdMap.get("id").indexOf("["+nodeId+"]")<0){
+                /**非重复更新ID记录数据*/
+                nodeIdMap.put("id",nodeIdMap.get("id")+"["+nodeId+"]");
+                nodeMap.put("id",nodeId);
+                /**节点通用样式定义*/
+                Map<String, Object> styles = new HashMap <>();
+                styles.put("stroke","#fff");//node边框颜色
+                nodeMap.put("size","20");//node大小
+                /**节点通用属性定义*/
+                nodeMap.put("name",nodeValue);
+                nodeMap.put("type",nodeType);
+                Map<String, Object> propertiesMap = new HashMap <>();
+                propertiesMap.put("name",nodeValue);
+                /**第一次遍历新增，其他更新或添加*/
+                if(stdjsTopMap.get("nodes")!=null&&!"".equals(stdjsTopMap.get("nodes"))){
+                    stdjsTopMap.get("nodes").add(nodeMap);
+                }else{
+                    List<Map<String, Object>> stdjsList = new ArrayList <>();
+                    stdjsList.add(nodeMap);
+                    stdjsTopMap.put("nodes",stdjsList);
+                }
+            }
+        }else{
+            String lineId = "r"+inputJson.get("_id").toString();
+            String lineStartId = inputJson.get("_startId").toString();
+            String lineEndId = inputJson.get("_endId").toString();
+            String lineType = inputJson.get("_type").toString();
+            Map<String, Object> edgesMap = new HashMap <>();
+            /**组装边的数据*/
+            if(edgeIdMap.get("id")==null||"".equals(edgeIdMap.get("id"))||edgeIdMap.get("id").indexOf("["+lineId+"]")<0){
+                edgeIdMap.put("id",edgeIdMap.get("id")+"["+lineId+"]");
+                edgesMap.put("id",lineId);
+                edgesMap.put("source",lineStartId);
+                edgesMap.put("target",lineEndId);
+                edgesMap.put("type",lineType);
+                edgesMap.put("size","1");
+                edgesMap.put("color","#545454");
+                if(stdjsTopMap.get("edges")!=null&&!"".equals(stdjsTopMap.get("edges"))){
+                    stdjsTopMap.get("edges").add(edgesMap);
+                }else{
+                    List<Map<String, Object>> stdjsList = new ArrayList <>();
+                    stdjsList.add(edgesMap);
+                    stdjsTopMap.put("edges",stdjsList);
+                }
+            }
+        }
+    }
+
+
+//    /**
+//     * 展示被保险人base-1模型图谱（neo4j to antV-G6）
+//     * @param insCode
+//     * @param insName
+//     * @return
+//     * @throws Exception
+//     */
+//    @GetMapping("visionAllData")
+//    public Object visionAllData(String token,String insCode, String insName) throws Exception {
+//        Map<String, String> error = new HashedMap();//错误信息收集池
+//        /**过滤无参数数据*/
+//        if (!TokenUtils.base1TokenValid(token)) {
+//            error.put("error", "error:错误的令牌");
+//            return toJSON(error);
+//        }else if (insCode == null || "".equals(insCode)) {
+//            error.put("error", "error:缺少被保险人编号参数");
+//            return toJSON(error);
+//        }else if (insName == null || "".equals(insName)) {
+//            error.put("error", "error:缺少被保险人姓名参数");
+//            return toJSON(error);
+//        }
+//        Map<String, List<Map<String, Object>>> stdjsMap = new HashedMap();
+//        List<Map<String, Object>> informationMapList = new ArrayList<Map<String, Object>>();
+//        /**加入被保险人、赔案、收款人、报案人统计*/
+//        Map<String, Object> insuredMap = new HashMap<String, Object>();
+//        Map<String, Object> claimMap = new HashMap<String, Object>();
+//        Map<String, Object> payeeMap = new HashMap<String, Object>();
+//        Map<String, Object> reportManMap = new HashMap<String, Object>();
+//        /**查询被保险人关联的所有节点*/
+//        List<Map<String, Object>> allRelationData = kgVisionService.findAllDataByInsuredName(insName, insCode);//过滤无效被保险人
+//        if (allRelationData == null || allRelationData.size() <= 0) {
+//            error.put("error", "error:未查询到被保险人对应的关联信息");
+//            return toJSON(error);
+//        }
+//        /**拆解neo4j的json数据 -data group层*/
+//        String dataGroup = JSON.toJSONString(allRelationData);
+//        JSONArray datasList = (JSONArray) JSONArray.parse(dataGroup);
+//        for(Object obj : datasList){
+//            JSONObject dataList = JSON.parseObject(String.valueOf(obj));
+//            Iterator iterator = dataList.keySet().iterator();
+//            while(iterator.hasNext()){
+//                /**取出所有节点与边的json串*/
+//                JSONArray jsonsList = dataList.getJSONArray(String.valueOf(iterator.next()));
+//                for(Object json : jsonsList){
+//                    JSONObject inputJson = JSON.parseObject(String.valueOf(json));
+//                    /**将单个json串转换为antV-G6的格式*/
+//                    getBase1StandJsonRe(stdjsMap,inputJson,nodeIdMap,edgeIdMap,insName,insuredMap,claimMap,payeeMap,reportManMap);
+//                }
+//            }
+//        }
+//        nodeIdMap.clear();
+//        edgeIdMap.clear();
+//        /**加入信息MAP*/
+//        Map<String,Object> ifmCypherMap = new HashMap<String,Object>();
+//        String countNodeInfo = "关联被保险人"+(insuredMap.size()-1)+"个，关联赔案"+claimMap.size()+"个，关联收款人"+payeeMap.size()+"个，关联报案人"+reportManMap.size()+"个";
+//        ifmCypherMap.put("cypher", OperBase1Utils.getAllNodeByNameT(insName,insCode));
+//        ifmCypherMap.put("insured",insuredMap);
+//        ifmCypherMap.put("claim",claimMap);
+//        ifmCypherMap.put("payee",payeeMap);
+//        ifmCypherMap.put("reportMan",reportManMap);
+//        ifmCypherMap.put("countNodeInfo",countNodeInfo);
+//        /**0-4类型的分析*/
+//        Map<String,Object> hybridInferentialMap = kgInferenceService.hybridInferentialAnalysis(insName,insCode,ifmCypherMap);
+//        informationMapList.add(hybridInferentialMap);
+//        stdjsMap.put("informations",informationMapList);
+//        /**推理分析部分*/
+//        return toJSON(stdjsMap);
+//    }
 
     private List<Map<String,Object>> structureStandJson(List<Map<String, Object>> todoData, String type) {
         String dataGroup = JSON.toJSONString(todoData);
