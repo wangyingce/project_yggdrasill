@@ -108,7 +108,6 @@ public class VisionController {
                 JSONArray jsonsList = dataList.getJSONArray(String.valueOf(iterator.next()));
                 for(Object json : jsonsList){
                     JSONObject inputJson = JSON.parseObject(String.valueOf(json));
-                    /**将单个json串转换为antV-G6的格式*/
                     getStandardJson(stdjsMap,inputJson);
                 }
             }
@@ -121,12 +120,25 @@ public class VisionController {
     private void getStandardJson(Map<String, List<Map<String, Object>>> stdjsTopMap,JSONObject inputJson) {
         /**分流数据类型*/
         if(inputJson.containsKey("_labels")){
-            String nodeType = inputJson.get("_labels").toString();
-            nodeType = nodeType.substring(nodeType.indexOf("[")+2,nodeType.indexOf("]")-1);
-            String nodeValue = inputJson.get("name").toString();
-            String nodeId = inputJson.get("_id").toString();
             Map<String, Object> nodeMap = new HashMap <>();
-
+            Map<String, Object> propertiesMap = new HashMap <>();
+            String nodeType = "";
+            String nodeValue = "";
+            String nodeId = "";
+            Iterator iterator = inputJson.keySet().iterator();
+            while(iterator.hasNext()){
+                String inputJsonKey = String.valueOf(iterator.next());
+                if("name" == inputJsonKey||"name".equals(inputJsonKey)){
+                    nodeValue =  (String) inputJson.get(inputJsonKey);
+                }else if("_id" == inputJsonKey||"_id".equals(inputJsonKey)){
+                    nodeId =  (inputJson.get(inputJsonKey)).toString();
+                }else if("_labels" == inputJsonKey||"_labels".equals(inputJsonKey)){
+                    nodeType =  String.valueOf(inputJson.get(inputJsonKey));
+                    nodeType = nodeType.substring(nodeType.indexOf("[")+2,nodeType.indexOf("]")-1);
+                }else{
+                    propertiesMap.put(inputJsonKey,(String) inputJson.get(inputJsonKey));
+                }
+            }
             /**ID去重判断*/
             if(nodeIdMap.get("id")==null||"".equals(nodeIdMap.get("id"))||nodeIdMap.get("id").indexOf("["+nodeId+"]")<0){
                 /**样式定义*/
@@ -145,7 +157,6 @@ public class VisionController {
                 }else{
                     styles.put("fill",nodeTypeMap.get(nodeType));
                 }
-                Map<String, Object> propertiesMap = new HashMap <>();
                 propertiesMap.put("name",nodeValue);
 
                 nodeMap.put("style",styles);

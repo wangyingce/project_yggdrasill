@@ -239,6 +239,7 @@ public class KgFusionService {
      */
     public void createFreeModels(Map modelMap) {
         JSONArray nodesJsonList = (JSONArray) modelMap.get("nodes");
+        String modelname = String.valueOf(modelMap.get("modelname"));
         Map<String,String> resMap = new HashMap();
 
         String lcnc = "";
@@ -268,9 +269,13 @@ public class KgFusionService {
                 }
             }
             properties  = properties.substring(1,properties.length());
+
+            properties = properties + ",model:'"+modelname+"'";//添加模版标签
             resMap.put(inputJson.get("id").toString(),":"+type+"{"+properties+"}");
             createNodeCql = createNodeCql.replace("<properties>",properties);
+
             lccnp = lccnp.substring(0,lccnp.length()-1);
+            lccnp = lccnp + ",model:line."+modelname;//添加模版标签
             lcnc = lcnc.replace("<properties>",lccnp);
             lcResMap.put(inputJson.get("id").toString(),":"+type+"{"+lccnp+"}");
             System.out.println("createNodeCql:"+createNodeCql+"_"+DateUtils.dateToString(new Date(), 3));
@@ -308,6 +313,7 @@ public class KgFusionService {
 
     public void createCSV(Map modelMap) throws IOException {
         JSONArray nodesJsonList = (JSONArray) modelMap.get("nodes");
+        String modelname = String.valueOf(modelMap.get("modelname"));
         Map<String, String> propertyNode = new HashMap<>();
         for(Object nodeJson : nodesJsonList){
             JSONObject inputJson = JSON.parseObject(String.valueOf(nodeJson));
@@ -321,13 +327,11 @@ public class KgFusionService {
                 propertyNode.put(pname,pvalue);
             }
         }
-
-//        String propertyString = JSON.toJSONString(propertyNode);
-//        JSONObject dataList = JSON.parseObject(JSON.toJSONString(propertyNode));
+        propertyNode.put("model",modelname);
         JSONArray propertyList = new JSONArray();
         propertyList.add(JSON.parseObject(JSON.toJSONString(propertyNode)));
         String s = ConvertCsv.toString(propertyList);
-        FileUtils.writeStringToFile(new File("/Users/eruda/IdeaProjects/kgsp-t1/insTest.csv"), s);
+        FileUtils.writeStringToFile(new File("./"+modelname+".csv"), s);
     }
 
     public void updatePageRankScore() {

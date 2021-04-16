@@ -211,6 +211,7 @@ public class OperBase1Utils{
 
     public static String getNeo4jDataByTemplateName(String templateName) {
         return "match dat=((na)<-[*]->(nb)) return dat as d1";
+//        return "match dat=((na)<-[*]->(nb)) where na.model= nb.model='"+templateName+"' return dat as d1";
     }
 
 
