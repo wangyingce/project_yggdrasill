@@ -57,10 +57,7 @@ public enum ResponseCode{
     PASSWORD_OVER(1009,"密码已过期"),
     PLY_EMPTY(1010,"保单信息为空"),
     SYSCDE_EMPTY(1011,"该产品号未配置流程大类，请核实！"),
-    SAVETEMP_ERROR(1012,"该暂存赔案号不存在或者已被处理"),
     PROD_ERROR(1013,"该操作员无产品权限"),
-    PLY_OVER(1014,"出险时间不能早于保单生效时间"),
-    PLY_ERROR(1015,"承保查询保单有效期失败"),
     SMS_ERROR(1016,"短信发送异常");
     /**
      * 返回码

@@ -86,7 +86,6 @@ public class VisionController {
         List<KgspInfoVo> kgspInfos = kgInferenceService.findPageRankByIns(kgspVo.getInsName(),kgspVo.getInsCode());
         kgspVo.setKgspInfoVo(kgspInfos);
         kgspVo.setKgUrl("http://10.6.6.118:8080/index.html?insCode="+kgspVo.getInsCode()+"&insName="+kgspVo.getInsName());
-//        String kkk = String.valueOf(toJSON(kgspVo));
         return toJSON(kgspVo);
     }
 
