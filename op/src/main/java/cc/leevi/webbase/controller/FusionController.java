@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.alibaba.fastjson.JSON.toJSON;
@@ -111,49 +112,65 @@ public class FusionController {
         /**测试报文工具**/
 //        String turl = "http://10.6.6.118:8080/visionAllData?insCode=110105201206059440&insName=%E9%82%A3%E4%B9%88";
 //        modelString = HttpUtils.httpURLPOSTCase(turl);
-
         Map modelMap = JSON.parseObject(modelString);
         kgFusionService.createFreeModels(modelMap);
         kgFusionService.createCSV(modelMap);
         message.put("sus", "saveModel:"+DateUtils.dateToString(new Date(), 3));
         return toJSON(message);
     }
-
     /**
      * 更新node节点
      */
     @GetMapping("updateNode")
-    public void updateNode(String id,String name,String identNum,String policyNum,String stard,String endd,String accd,String payNum,String reportNum) throws Exception{
+    public void updateNode(String id,String properties) throws Exception {
         Map<String, String> error = new HashedMap();//错误信息收集池
         if (id == null || "".equals(id)) {
             error.put("id", "error:更新ID为null");
         }
-        String cql = "MATCH (s)  WHERE ID(s) = "+id+" set ";
-        if(name!=null&&!"".equals(name)){
-            cql = cql + "s.name = '"+name+"',";
+        String cql = "MATCH (s)  WHERE ID(s) = " + id + " set ";
+
+        Map propertiesMap = JSON.parseObject(properties);
+        Iterator iterator = propertiesMap.keySet().iterator();
+        while(iterator.hasNext()){
+            String propertieskey = iterator.next().toString();
+            String propertiesValue = String.valueOf(propertiesMap.get(propertieskey));
+            cql = cql + "s."+propertieskey+ "='"+propertiesValue+"',";
         }
-        if(identNum!=null&&!"".equals(identNum)){
-            cql = cql + "s.身份证号 = '"+identNum+"',";
-        }
-        if(policyNum!=null&&!"".equals(policyNum)){
-            cql = cql + "s.保单号 = '"+policyNum+"',";
-        }
-        if(stard!=null&&!"".equals(stard)){
-            cql = cql + "s.保险起期 = '"+stard+"',";
-        }
-        if(endd!=null&&!"".equals(endd)){
-            cql = cql + "s.保险止期 = '"+endd+"',";
-        }
-        if(accd!=null&&!"".equals(accd)){
-            cql = cql + "s.出险时间 = '"+accd+"',";
-        }
-        if(payNum!=null&&!"".equals(payNum)){
-            cql = cql + "s.银行卡 = '"+payNum+"',";
-        }
-        if(reportNum!=null&&!"".equals(reportNum)){
-            cql = cql + "s.报案电话 = '"+reportNum+"',";
-        }
-        cql = cql.substring(0,cql.length()-1);
+        cql = cql.substring(0, cql.length() - 1);
         kgFusionService.updateNodeById(cql);
     }
+//    @GetMapping("updateNode")
+//    public void updateNode(String id,String name,String identNum,String policyNum,String stard,String endd,String accd,String payNum,String reportNum) throws Exception{
+//        Map<String, String> error = new HashedMap();//错误信息收集池
+//        if (id == null || "".equals(id)) {
+//            error.put("id", "error:更新ID为null");
+//        }
+//        String cql = "MATCH (s)  WHERE ID(s) = "+id+" set ";
+//        if(name!=null&&!"".equals(name)){
+//            cql = cql + "s.name = '"+name+"',";
+//        }
+//        if(identNum!=null&&!"".equals(identNum)){
+//            cql = cql + "s.身份证号 = '"+identNum+"',";
+//        }
+//        if(policyNum!=null&&!"".equals(policyNum)){
+//            cql = cql + "s.保单号 = '"+policyNum+"',";
+//        }
+//        if(stard!=null&&!"".equals(stard)){
+//            cql = cql + "s.保险起期 = '"+stard+"',";
+//        }
+//        if(endd!=null&&!"".equals(endd)){
+//            cql = cql + "s.保险止期 = '"+endd+"',";
+//        }
+//        if(accd!=null&&!"".equals(accd)){
+//            cql = cql + "s.出险时间 = '"+accd+"',";
+//        }
+//        if(payNum!=null&&!"".equals(payNum)){
+//            cql = cql + "s.银行卡 = '"+payNum+"',";
+//        }
+//        if(reportNum!=null&&!"".equals(reportNum)){
+//            cql = cql + "s.报案电话 = '"+reportNum+"',";
+//        }
+//        cql = cql.substring(0,cql.length()-1);
+//        kgFusionService.updateNodeById(cql);
+//    }
 }
