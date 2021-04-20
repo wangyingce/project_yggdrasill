@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cc.leevi</groupId>
-    <artifactId>web-base</artifactId>
+    <artifactId>ygg-op</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>web-base</name>
+    <name>ygg-op</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
