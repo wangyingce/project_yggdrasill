@@ -114,7 +114,7 @@ export default {
               .get("/updateNode", {
                 params: {
                   id: vm.form.id,
-                  ...p,
+                  properties: JSON.stringify(p),
                 },
               })
               .then(function () {
