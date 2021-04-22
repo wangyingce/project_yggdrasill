@@ -105,7 +105,7 @@ public class FusionController {
 
     @GetMapping("saveModel")
     public Object saveModel(String modelString) throws Exception{
-        Map<String, String> message = new HashedMap();
+        Map<String, String> msg = new HashedMap();
         /**算法运行测试工具**/
 //        modelString = "MATCH (n:报案人) WITH collect(n) as nodes CALL apoc.algo.pageRank(nodes) YIELD node,score SET node.pageRankScore=score";
 //        kgFusionService.RunAPOC(modelString);
@@ -115,8 +115,8 @@ public class FusionController {
         Map modelMap = JSON.parseObject(modelString);
         kgFusionService.createFreeModels(modelMap);
         kgFusionService.createCSV(modelMap);
-        message.put("sus", "saveModel:"+DateUtils.dateToString(new Date(), 3));
-        return toJSON(message);
+        msg.put("sus", "saveModel:"+DateUtils.dateToString(new Date(), 3));
+        return toJSON(msg);
     }
     /**
      * 更新node节点
@@ -139,38 +139,4 @@ public class FusionController {
         cql = cql.substring(0, cql.length() - 1);
         kgFusionService.updateNodeById(cql);
     }
-//    @GetMapping("updateNode")
-//    public void updateNode(String id,String name,String identNum,String policyNum,String stard,String endd,String accd,String payNum,String reportNum) throws Exception{
-//        Map<String, String> error = new HashedMap();//错误信息收集池
-//        if (id == null || "".equals(id)) {
-//            error.put("id", "error:更新ID为null");
-//        }
-//        String cql = "MATCH (s)  WHERE ID(s) = "+id+" set ";
-//        if(name!=null&&!"".equals(name)){
-//            cql = cql + "s.name = '"+name+"',";
-//        }
-//        if(identNum!=null&&!"".equals(identNum)){
-//            cql = cql + "s.身份证号 = '"+identNum+"',";
-//        }
-//        if(policyNum!=null&&!"".equals(policyNum)){
-//            cql = cql + "s.保单号 = '"+policyNum+"',";
-//        }
-//        if(stard!=null&&!"".equals(stard)){
-//            cql = cql + "s.保险起期 = '"+stard+"',";
-//        }
-//        if(endd!=null&&!"".equals(endd)){
-//            cql = cql + "s.保险止期 = '"+endd+"',";
-//        }
-//        if(accd!=null&&!"".equals(accd)){
-//            cql = cql + "s.出险时间 = '"+accd+"',";
-//        }
-//        if(payNum!=null&&!"".equals(payNum)){
-//            cql = cql + "s.银行卡 = '"+payNum+"',";
-//        }
-//        if(reportNum!=null&&!"".equals(reportNum)){
-//            cql = cql + "s.报案电话 = '"+reportNum+"',";
-//        }
-//        cql = cql.substring(0,cql.length()-1);
-//        kgFusionService.updateNodeById(cql);
-//    }
 }
