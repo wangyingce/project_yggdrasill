@@ -1,0 +1,29 @@
+input[type=date], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=url], select, textarea {
+  padding: 0.5rem 1rem;
+}
+
+label.error {
+  display: block!important;
+  position: absolute;
+  font-size: 12px;
+  color: #d6d6d6;
+}
+
+.vlt-timeline-item
+{
+    padding: 1.125rem 0;
+}
+
+.loading-div {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #F2F2F2;
+}

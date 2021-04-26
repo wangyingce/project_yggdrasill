@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="97" viewBox="0 0 376 97">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 70.833px;
+        text-anchor: middle;
+        fill: #fff;
+        font-family: Gilroy;
+        font-weight: 500;
+      }
+
+      .cls-2 {
+        fill: red;
+      }
+    </style>
+  </defs>
+  <text id="Yggdrasill." class="cls-1" x="189.916" y="69.821"><tspan x="189.916">Yggdrasill<tspan class="cls-2">.</tspan></tspan></text>
+</svg>
