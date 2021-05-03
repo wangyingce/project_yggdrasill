@@ -3,9 +3,9 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
+  indexPath: 'engine.html',
   productionSourceMap: false,
   devServer: {
-    // proxy: 'http://10.100.8.250:8080'
     proxy: 'http://10.6.6.118:8080'
   },
   configureWebpack : {
