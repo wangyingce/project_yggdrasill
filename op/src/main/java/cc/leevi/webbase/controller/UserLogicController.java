@@ -4,9 +4,7 @@ import cc.leevi.webbase.service.UserLogicService;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -35,8 +33,21 @@ public class UserLogicController {
         }
         return checkFlag;
     }
-    @GetMapping("/registUser")
-    public Map<String, String> registUser(String properties){
+
+    @RequestMapping("/checkUserLogin")
+    public Boolean checkUserLogin(@RequestParam(value = "properties") String properties){
+        Boolean checkUserLogin = false;
+        Map<String, String> error = new HashedMap();//错误信息收集池
+        if (properties == null || "".equals(properties)) {
+            error.put("error", "checkUserLogin入参为空");
+        }
+        Map propertiesMap = JSON.parseObject(properties);
+        checkUserLogin = userLogicService.checkUserLogin(String.valueOf(propertiesMap.get("name")),String.valueOf(propertiesMap.get("password")));
+        return checkUserLogin;
+    }
+
+    @RequestMapping("/registUser")
+    public Map<String, String> registUser(@RequestParam(value = "properties") String properties) throws Exception {
         Map<String, String> msg = new HashedMap();
         if (properties == null || "".equals(properties)) {
             msg.put("error", "registUser入参为空");

@@ -29,7 +29,17 @@ public class UserLogicService {
     protected JdbcTemplate neo4jJdbcTemplate;
 
     public Boolean checkUser(String ppValue) {
-        List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n) where n.name='"+ppValue+"'");
+        List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n) where n.name='"+ppValue+"' return n");
+        if(userlist!=null&&userlist.size()>0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    //match (n:user) where n.name='1231231' and n.password='sdf' return n
+    public Boolean checkUserLogin(String name,String password) {
+        List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n:user) where n.name='"+name+"' and n.password='"+password+"' return n");
         if(userlist!=null&&userlist.size()>0){
             return false;
         }else{

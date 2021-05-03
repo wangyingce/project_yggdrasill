@@ -2,7 +2,7 @@
   <defs>
     <style>
       .cls-1 {
-        font-size: 100px;
+        font-size: 70.833px;
         text-anchor: middle;
         fill: #fff;
         font-family: Gilroy;
@@ -14,5 +14,5 @@
       }
     </style>
   </defs>
-  <text id="Ygg." class="cls-1" x="196.478" y="72.2"><tspan x="196.478">Ygg<tspan class="cls-2">.</tspan></tspan></text>
+  <text id="Yggdrasill." class="cls-1" x="189.916" y="69.821"><tspan x="189.916">Yggdrasill<tspan class="cls-2">.</tspan></tspan></text>
 </svg>
