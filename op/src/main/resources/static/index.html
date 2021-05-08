@@ -209,10 +209,16 @@
 	</div>
 	<!--Libs-->
 	<script src="assets/vendors/jquery-3.5.1.min.js"></script>
+	<script src="assets/vendors/jquery.cookie.min.js"></script>
 	<script src="assets/scripts/vlt-plugins.min.js"></script>
 	<script src="assets/scripts/vlt-helpers.js"></script>
 	<script src="assets/scripts/vlt-controllers.js"></script>
 	<script src="assets/scripts/messages_zh.js"></script>
+	<script>
+		if ($.cookie('ygg1412')) { // 如果有
+			location.href = "./indexc.html"
+		}
+	</script>
 </body>
 
 </html>

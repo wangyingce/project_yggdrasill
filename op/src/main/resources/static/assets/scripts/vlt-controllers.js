@@ -108,7 +108,7 @@
 						} else if (thisForm.find('.submit-btn').text() == '登陆') {
 							url = '/checkUserLogin'
 							backFun =  function () {
-								location.href = '/web.html'
+								location.href = '/indexc.html'
 							}
 							$(form).serializeArray().forEach(function(v) {
 								if(v.name == 'name' || v.name == 'password') {
@@ -130,7 +130,7 @@
 							processData: false,
 							success: function (data) {
 								$('.loading-div').hide()
-								if(data.sus) {
+								if(data.sus!=null) {
 									backFun && backFun(data)
 									alert(data.sus)
 								} else {
@@ -183,6 +183,7 @@
 
 			$('.vlt-content-slider').each(function () {
 
+				alert("line:186");
 				// var $this = $(this),
 				// 	container = $this.find('.swiper-container'),
 				// 	anchor = $this.data('navigation-anchor'),
