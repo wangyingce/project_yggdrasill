@@ -28,16 +28,6 @@ public class UserLogicService {
     @Qualifier("neo4jJdbcTemplate")
     protected JdbcTemplate neo4jJdbcTemplate;
 
-    public Boolean checkUser(String ppValue) {
-        List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n) where n.name='"+ppValue+"' return n");
-        if(userlist!=null&&userlist.size()>0){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    //match (n:user) where n.name='1231231' and n.password='sdf' return n
     public Boolean checkUserLogin(String name,String password) {
         List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n:user) where n.name='"+name+"' and n.password='"+password+"' return n");
         if(userlist!=null&&userlist.size()>0){
@@ -72,5 +62,15 @@ public class UserLogicService {
         String lineCql =  "MATCH (aa:user {name:'"+user+"'}), (bb:template {name:'"+name+"'}) \n" +
                           "MERGE (aa) -[:own]-> (bb)";
         neo4jJdbcTemplate.update(lineCql);
+    }
+
+    public void addUserCookies(String name, String uuid) {
+        String updateCql =  "MATCH (aa:user {name:'"+name+"'}) set aa."+UUIDUtils.usercId+"='"+uuid+"'";
+        neo4jJdbcTemplate.update(updateCql);
+    }
+
+    public List<Map<String, Object>> queryUserCookies(String property) {
+        return neo4jJdbcTemplate.queryForList("MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u,t");
+//        return neo4jJdbcTemplate.queryForList("MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u.name,u.phone,t.name,t.remark");
     }
 }
