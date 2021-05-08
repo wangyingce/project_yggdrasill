@@ -239,7 +239,7 @@ public class KgFusionService {
      */
     public void createFreeModels(Map modelMap) {
         JSONArray nodesJsonList = (JSONArray) modelMap.get("nodes");
-        String modelname = String.valueOf(modelMap.get("modelname"));
+        String modelname = String.valueOf(modelMap.get("user")) + "_" + String.valueOf(modelMap.get("modelname"));
         Map<String,String> resMap = new HashMap();
 
         String lcnc = "";

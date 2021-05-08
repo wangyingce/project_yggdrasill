@@ -41,9 +41,9 @@ public class UserLogicService {
     public Boolean checkUserLogin(String name,String password) {
         List<Map<String, Object>> userlist = neo4jJdbcTemplate.queryForList("match (n:user) where n.name='"+name+"' and n.password='"+password+"' return n");
         if(userlist!=null&&userlist.size()>0){
-            return false;
-        }else{
             return true;
+        }else{
+            return false;
         }
     }
 
@@ -59,5 +59,18 @@ public class UserLogicService {
         propertyParam = propertyParam.substring(0,propertyParam.length()-1);
         cql =cql.replace("<property>",propertyParam);
         neo4jJdbcTemplate.update(cql);
+    }
+
+    public void createTemplate(Map propertiesMap) {
+        String user  = String.valueOf(propertiesMap.get("user"));
+        String name  = String.valueOf(propertiesMap.get("name"));
+        String remark  = String.valueOf(propertiesMap.get("remark"));
+        //创建tem节点
+        String cql = "CREATE(n:template {name:'" + name + "',remark:'" +remark+ "'})";
+        neo4jJdbcTemplate.update(cql);
+        //链接user和tem
+        String lineCql =  "MATCH (aa:user {name:'"+user+"'}), (bb:template {name:'"+name+"'}) \n" +
+                          "MERGE (aa) -[:own]-> (bb)";
+        neo4jJdbcTemplate.update(lineCql);
     }
 }

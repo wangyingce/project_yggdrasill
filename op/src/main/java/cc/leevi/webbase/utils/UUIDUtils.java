@@ -7,6 +7,7 @@ import java.util.UUID;
  */
 public class UUIDUtils {
 
+    public static final String usercId = "ygg1412";
     /**
      * 格式前的UUID ： 68dcb13d-02ec-4233-b65a-6698830e0b51
      */

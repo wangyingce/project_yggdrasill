@@ -210,32 +210,6 @@ public class OperBase1Utils{
     }
 
     public static String getNeo4jDataByTemplateName(String templateName) {
-        return "match dat=((na)<-[*]->(nb)) return dat as d1";
-//        return "match dat=((na)<-[*]->(nb)) where na.model= nb.model='"+templateName+"' return dat as d1";
+        return "match dat=((na)<-[*]->(nb)) where na.model= nb.model='"+templateName+"' return dat as d1";
     }
-
-
-//    public static String getBase1StandJson(JSONObject inputJson,Integer base1NodeX,Integer base1NodeY) {
-//        /**分流节点与边*/
-//        if(inputJson.containsKey("_labels")){
-//            String base1NodeStand = "'node', { id: '<id>', shape:'circle', label: '<name>',labelCfg: { position: 'bottom' },style: { fill: '#c27ba0', stroke: '#c27ba0' }, x: <x>, y: <y> }";
-//            String nodeType = inputJson.get("_labels").toString();
-//            String nodeValue = inputJson.get("name").toString();
-//            String nodeId = inputJson.get("_id").toString();
-//
-//            if("[\"被保险人\"]".equals(nodeType)||nodeType=="[\"被保险人\"]"){
-//                base1NodeStand = base1NodeStand.replace("<id>",nodeId).replace("<name>",nodeValue).replace("<x>",base1NodeX.toString()).replace("<y>",base1NodeY.toString());
-//                System.out.println("------------values:"+base1NodeStand);
-//            }
-////            if(inputJson.containsValue("[\"保单号\"]")){
-////                base1NodeStand = base1NodeStand.replace("<name>",inputJson.get("_labels").toString()).replace("<x>",base1NodeStandx.toString()).replace("<y>",base1NodeStandy.toString());
-////            }
-//            return base1NodeStand;
-//        }else if(inputJson.containsKey("_type")){
-//            String base1LineStand = "'edge', { id: 'edge0', source: '111', target: '222', label: '拥有保单',style: {endArrow: true,stroke: 'grey'},labelCfg: {autoRotate: true,style: {stroke: 'white',lineWidth: 5,fill: 'grey'}}}";
-//            return base1LineStand;
-//        }else{
-//            return null;
-//        }
-//    }
 }
