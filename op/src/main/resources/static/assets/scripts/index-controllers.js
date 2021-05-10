@@ -13,9 +13,9 @@ $.ajax({
         $('.loading-div').hide()
         if(data.sus!=null) {
             // console.log(data)
-            // if(window.location.pathname.indexOf("login.html")!=-1){//登录成功如果当前是login也跳转index
-            //     location.href = "index.html"
-            // }
+            if(window.location.pathname.indexOf("login.html")!=-1){//登录成功如果当前是login也跳转index
+                location.href = "index.html"
+            }
         } else {
             $.removeCookie('ygg1412', {domain: location.hostname});
             location.href = "login.html#User"
