@@ -58,7 +58,6 @@
 			contactForm.each(function () {
 
 				var thisForm = $(this),
-					successMessage = thisForm.find('.message.success'),
 					errorMessage = thisForm.find('.message.danger');
 
 				var goReg = thisForm.find('.go-register')
