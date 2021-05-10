@@ -5,9 +5,10 @@ import cc.leevi.webbase.utils.UUIDUtils;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class UserLogicController {
     private UserLogicService userLogicService;
 
     @RequestMapping("/checkUserLogin")
-    public Map<String, String> checkUserLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "properties") String properties){
+    public Map<String, String> checkUserLogin(HttpServletResponse response, @RequestParam(value = "properties") String properties){
         Boolean checkUserLogin = false;
         Map<String, String> msg = new HashedMap();//错误信息收集池
         if (properties == null || "".equals(properties)) {
@@ -30,10 +31,11 @@ public class UserLogicController {
             checkUserLogin = userLogicService.checkUserLogin(String.valueOf(propertiesMap.get("name")),String.valueOf(propertiesMap.get("password")));
             if(checkUserLogin){
                 msg.put("sus", "用户检索成功");
-                Cookie cookie1 = new Cookie(UUIDUtils.usercId, UUIDUtils.getUUID());
+                String uuid = UUIDUtils.getUUID();
+                Cookie cookie1 = new Cookie(UUIDUtils.usercId, uuid);
                 cookie1.setMaxAge(1*24*60*60*30);//一个月失效
                 response.addCookie(cookie1);
-                userLogicService.addUserCookies(String.valueOf(propertiesMap.get("name")),UUIDUtils.getUUID());
+                userLogicService.addUserCookies(String.valueOf(propertiesMap.get("name")),uuid);
             }else{
                 msg.put("error", "未检索到当前用户");
             }
@@ -73,24 +75,30 @@ public class UserLogicController {
 
     @RequestMapping("/initUserInfo")
     public Map<String, String> initUserInfo(@RequestParam(value = "property") String property) throws Exception {
-    //test
+    //test,property
 //    public Map<String, String> initUserInfo(String property) throws Exception {
 //        property = "cd25464c7e724c289382bbf260ca21f0";
         Map<String, String> msg = new HashedMap();
-        if (property == null || "".equals(property)) {
-            msg.put("error", "initUserInfo入参为空");
-        }
-        List<Map<String, Object>> userlist = userLogicService.queryUserCookies(property);
-        if(userlist!=null&&userlist.size()>0){
-            String templateJson = "";
-            for(Map<String, Object> user :userlist){
-                msg.put("user",user.get("u").toString());
-                templateJson = templateJson + user.get("t").toString()+",";
-            }
-            msg.put("template",templateJson.substring(0,templateJson.length()-1));
-            msg.put("sus", "initUserInfo成功");
+        if(property==null||"".equals(property)||"undefined".equals(property)){
+            msg.put("error", "请先登录");
         }else{
-            msg.put("error", "initUserInfo未查询到用户信息");
+            List<Map<String, Object>> userlist =  userLogicService.queryUserCookies(property);
+            if(userlist!=null&&userlist.size()>0){
+                for(Map<String, Object> user :userlist){
+                    msg.put("user",user.get("u").toString());
+                }
+                List<Map<String, Object>> temlist =  userLogicService.queryTemplateCookies(property);
+                if(temlist!=null&&temlist.size()>0){
+                    String templateJson = "";
+                    for(Map<String, Object> tem :temlist){
+                        templateJson = templateJson + tem.get("t").toString()+",";
+                    }
+                    msg.put("template",templateJson.substring(0,templateJson.length()-1));
+                }
+                msg.put("sus", "initUserInfo成功");
+            }else{
+                msg.put("error", "initUserInfo未查询到用户信息");
+            }
         }
         return msg;
     }

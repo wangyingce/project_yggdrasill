@@ -70,7 +70,14 @@ public class UserLogicService {
     }
 
     public List<Map<String, Object>> queryUserCookies(String property) {
-        return neo4jJdbcTemplate.queryForList("MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u,t");
+//        String cookiesCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u,t";
+        String userCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'}) return u";
+        return neo4jJdbcTemplate.queryForList(userCql);
 //        return neo4jJdbcTemplate.queryForList("MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u.name,u.phone,t.name,t.remark");
+    }
+
+    public List<Map<String, Object>> queryTemplateCookies(String property) {
+        String temCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return t";
+        return neo4jJdbcTemplate.queryForList(temCql);
     }
 }

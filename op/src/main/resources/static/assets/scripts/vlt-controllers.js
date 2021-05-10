@@ -108,7 +108,7 @@
 						} else if (thisForm.find('.submit-btn').text() == '登陆') {
 							url = '/checkUserLogin'
 							backFun =  function () {
-								location.href = '/indexc.html'
+								location.href = '/index.html'
 							}
 							$(form).serializeArray().forEach(function(v) {
 								if(v.name == 'name' || v.name == 'password') {
