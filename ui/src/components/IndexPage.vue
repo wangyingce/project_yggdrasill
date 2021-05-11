@@ -183,7 +183,7 @@ export default {
       axios.get('/visionAllData' + location.search)
       .then(function (response) {
         if(response.status != 200 || response.data.error) {
-          alert(response.data.error || response.statusText)
+          vm.$message.error(response.data.error || response.statusText)
           return
         }
         let json = response.data

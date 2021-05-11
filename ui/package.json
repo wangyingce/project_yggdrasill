@@ -12,7 +12,8 @@
     "core-js": "^3.6.5",
     "d3": "^6.5.0",
     "element-ui": "^2.4.5",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-cookies": "^1.7.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
