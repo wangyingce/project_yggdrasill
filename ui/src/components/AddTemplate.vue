@@ -191,6 +191,13 @@ import DrawForce from "@/plugins/drawForce";
 import axios from "axios";
 import InputProp from "./InputProp";
 
+function getParameter(name, search) {
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+  search = search || window.location.search
+  let r = search.substr(1).match(reg)
+  if (r != null) return unescape(r[2]); return null
+}
+
 let timer;
 let id = 1;
 let colori = 0;
@@ -351,6 +358,7 @@ export default {
             } else {
               this.nodes.push(nodes);
             }
+            this.nodes.push()
             this.close();
             this.updateD3();
           });
@@ -514,6 +522,30 @@ export default {
       this.links = [];
       this.startD3(this.nodes, this.links);
     },
+    initData(id) {
+      let vm = this
+      axios
+        .get("/getModelData?mid=" + id)
+        .then(function (response) {
+          if(response.status != 200 || response.data.error) {
+            vm.$message.error(response.data.error || response.statusText)
+            return
+          }
+          let data = response.data
+          vm.nodes = data.nodes || []
+          vm.links = data.links || []
+          vm.startD3(vm.nodes, vm.links);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  },
+  created() {
+    let mid = getParameter('mid', location.search)
+    if (mid) {
+      this.initData(mid)
+    }
   },
   mounted() {
     this.setData();
