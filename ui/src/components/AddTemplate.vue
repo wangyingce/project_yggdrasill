@@ -478,10 +478,12 @@ export default {
         })
           .then(({ value }) => {
             let data = {
+              userc: this.$cookies.get('ygg1412'),
               modelname: value,
               nodes: this.nodes,
               edges: this.links,
             };
+            console.log(data);
             axios
               .get(
                 "/saveModel?modelString=" +

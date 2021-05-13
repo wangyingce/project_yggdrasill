@@ -2,6 +2,7 @@ package cc.leevi.webbase.controller;
 
 import cc.leevi.webbase.service.KgCommonService;
 import cc.leevi.webbase.service.KgFusionService;
+import cc.leevi.webbase.service.UserLogicService;
 import cc.leevi.webbase.utils.DateUtils;
 import cc.leevi.webbase.utils.HttpUtils;
 import com.alibaba.fastjson.JSON;
@@ -30,7 +31,7 @@ public class FusionController {
     @Autowired
     private KgFusionService kgFusionService;
     @Autowired
-    private KgCommonService kgCommonService;
+    private UserLogicService userLogicService;
 
     @Value("${rangeUrl}")
     private String rangeUrl;
@@ -113,6 +114,18 @@ public class FusionController {
 //        String turl = "http://10.6.6.118:8080/visionAllData?insCode=110105201206059440&insName=%E9%82%A3%E4%B9%88";
 //        modelString = HttpUtils.httpURLPOSTCase(turl);
         Map modelMap = JSON.parseObject(modelString);
+        String userc = String.valueOf(modelMap.get("userc"));
+        if(userc!=null&&!"".equals(userc)){
+            String username  = userLogicService.findUserByCookies(userc);
+            if(username!=null&&!"".equals(username)){
+                modelMap.put("usern",username);
+                userLogicService.createTemplate(modelMap);
+            }else{
+                msg.put("error", "未检索到当前用户_saveModel_123");
+            }
+        }else{
+            msg.put("error", "未登录，请先登录:"+userc);
+        }
         kgFusionService.createFreeModels(modelMap);
         kgFusionService.createCSV(modelMap);
         msg.put("sus", "saveModel:"+DateUtils.dateToString(new Date(), 3));

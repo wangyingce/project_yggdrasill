@@ -212,4 +212,7 @@ public class OperBase1Utils{
     public static String getNeo4jDataByTemplateName(String templateName) {
         return "match dat=((na)<-[*]->(nb)) where na.model= nb.model='"+templateName+"' return dat as d1";
     }
+    public static String getNodeUserNameByCookies(String cookies) {
+        return "MATCH (u:user {"+UUIDUtils.usercId+":'"+cookies+"'}) return u.name";
+    }
 }

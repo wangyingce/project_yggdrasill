@@ -62,12 +62,7 @@ public class UserLogicController {
         if (properties == null || "".equals(properties)) {
             msg.put("error", "createTemplate入参为空");
         }
-//        Map propertiesMap = JSON.parseObject(properties);
-//test
-        Map propertiesMap  =  new HashMap();
-        propertiesMap.put("user","wyc");
-        propertiesMap.put("name","sivlersys");
-        propertiesMap.put("remark","test-2");
+        Map propertiesMap = JSON.parseObject(properties);
         userLogicService.createTemplate(propertiesMap);
         msg.put("sus", "createTemplate成功");
         return msg;
@@ -82,7 +77,7 @@ public class UserLogicController {
         if(property==null||"".equals(property)||"undefined".equals(property)){
             msg.put("error", "请先登录");
         }else{
-            List<Map<String, Object>> userlist =  userLogicService.queryUserCookies(property);
+            List<Map<String, Object>> userlist =  userLogicService.queryNodeUserByCookies(property);
             if(userlist!=null&&userlist.size()>0){
                 for(Map<String, Object> user :userlist){
                     msg.put("user",user.get("u").toString());

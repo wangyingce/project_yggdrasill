@@ -52,16 +52,13 @@ public class UserLogicService {
     }
 
     public void createTemplate(Map propertiesMap) {
-        String user  = String.valueOf(propertiesMap.get("user"));
-        String name  = String.valueOf(propertiesMap.get("name"));
-        String remark  = String.valueOf(propertiesMap.get("remark"));
-        //创建tem节点
-        String cql = "CREATE(n:template {name:'" + name + "',remark:'" +remark+ "'})";
-        neo4jJdbcTemplate.update(cql);
-        //链接user和tem
-        String lineCql =  "MATCH (aa:user {name:'"+user+"'}), (bb:template {name:'"+name+"'}) \n" +
+        String usern  = String.valueOf(propertiesMap.get("usern"));
+        String tname  = String.valueOf(propertiesMap.get("modelname"));
+        String tcql = "CREATE(n:template {name:'" + tname +"'})";
+        neo4jJdbcTemplate.update(tcql);
+        String lCql =  "MATCH (aa:user {name:'"+usern+"'}), (bb:template {name:'"+tname+"'}) \n" +
                           "MERGE (aa) -[:own]-> (bb)";
-        neo4jJdbcTemplate.update(lineCql);
+        neo4jJdbcTemplate.update(lCql);
     }
 
     public void addUserCookies(String name, String uuid) {
@@ -69,7 +66,7 @@ public class UserLogicService {
         neo4jJdbcTemplate.update(updateCql);
     }
 
-    public List<Map<String, Object>> queryUserCookies(String property) {
+    public List<Map<String, Object>> queryNodeUserByCookies(String property) {
 //        String cookiesCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u,t";
         String userCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'}) return u";
         return neo4jJdbcTemplate.queryForList(userCql);
@@ -79,5 +76,15 @@ public class UserLogicService {
     public List<Map<String, Object>> queryTemplateCookies(String property) {
         String temCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return t";
         return neo4jJdbcTemplate.queryForList(temCql);
+    }
+
+    public String findUserByCookies(String userc) {
+        String usercCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+userc+"'}) return u.name";
+        Map<String, Object> usermap = neo4jJdbcTemplate.queryForMap(usercCql);
+        if(usermap!=null&&usermap.get("u.name")!=null){
+            return String.valueOf(usermap.get("u.name"));
+        }else{
+            return null;
+        }
     }
 }

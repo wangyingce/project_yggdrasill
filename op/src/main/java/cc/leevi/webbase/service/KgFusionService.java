@@ -238,8 +238,11 @@ public class KgFusionService {
      * @param modelMap
      */
     public void createFreeModels(Map modelMap) {
+        /**通过cookies获得user节点的name，用user的name+modelname做用户隔离**/
+        Map<String, Object> usermap = neo4jJdbcTemplate.queryForMap(OperBase1Utils.getNodeUserNameByCookies(String.valueOf(modelMap.get("userc"))));
+        String modelname = usermap.get("u.name") + "_" + modelMap.get("modelname");
+
         JSONArray nodesJsonList = (JSONArray) modelMap.get("nodes");
-        String modelname = String.valueOf(modelMap.get("user")) + "_" + String.valueOf(modelMap.get("modelname"));
         Map<String,String> resMap = new HashMap();
 
         String lcnc = "";
