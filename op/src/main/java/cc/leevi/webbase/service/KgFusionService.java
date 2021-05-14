@@ -240,8 +240,8 @@ public class KgFusionService {
     public void createFreeModels(Map modelMap) {
         /**通过cookies获得user节点的name，用user的name+modelname做用户隔离**/
         Map<String, Object> usermap = neo4jJdbcTemplate.queryForMap(OperBase1Utils.getNodeUserNameByCookies(String.valueOf(modelMap.get("userc"))));
-        String modelname = usermap.get("u.name") + "_" + modelMap.get("modelname");
-
+        String modelname = String.valueOf(modelMap.get("modelname"));
+        String username= String.valueOf(usermap.get("u.name"));
         JSONArray nodesJsonList = (JSONArray) modelMap.get("nodes");
         Map<String,String> resMap = new HashMap();
 
@@ -273,12 +273,12 @@ public class KgFusionService {
             }
             properties  = properties.substring(1,properties.length());
 
-            properties = properties + ",model:'"+modelname+"'";//添加模版标签
+            properties = properties + ",model:'"+modelname+"'"+ ",usern:'"+username+"'";//添加模版标签
             resMap.put(inputJson.get("id").toString(),":"+type+"{"+properties+"}");
             createNodeCql = createNodeCql.replace("<properties>",properties);
 
             lccnp = lccnp.substring(0,lccnp.length()-1);
-            lccnp = lccnp + ",model:line."+modelname;//添加模版标签
+            lccnp = lccnp + ",model:line."+modelname+ ",usern:line."+username;//添加模版标签
             lcnc = lcnc.replace("<properties>",lccnp);
             lcResMap.put(inputJson.get("id").toString(),":"+type+"{"+lccnp+"}");
             System.out.println("createNodeCql:"+createNodeCql+"_"+DateUtils.dateToString(new Date(), 3));
