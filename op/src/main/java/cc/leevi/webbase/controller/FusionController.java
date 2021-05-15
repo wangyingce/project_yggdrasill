@@ -35,31 +35,6 @@ public class FusionController {
 
     @Value("${rangeUrl}")
     private String rangeUrl;
-    /**
-     * 查询导数（不推荐）
-     * @throws Exception
-     */
-    @GetMapping("pumpClaimData")
-    public void pumpClaimData() throws Exception{
-//        Date dateSeqStart= DateUtils.stringToDate("2019-03-05", 0);
-//        Date dateSeqEnd= DateUtils.stringToDate("2019-03-09", 0);
-////        System.out.println("ate-kg getClaimStructuredData begin at:"+DateUtils.dateToString(new Date(), 3));
-//        //get_all结构化数据
-//        List<PumpClaimDataVo> pumps = kgFusionService.getClaimStructuredData(DateUtils.dateToString(dateSeqStart, 1),DateUtils.dateToString(dateSeqEnd, 1));
-////        测试用，重复测试
-////        System.out.println("delAllGraphDatas begin at:"+DateUtils.dateToString(new Date(), 3));
-//        kgCommonService.delAllGraphDatas();
-////        创建所有和admin用户
-////        System.out.println("createPumpIndex begin at:"+DateUtils.dateToString(new Date(), 3));
-////        kgFusionService.createPumpIndex();
-//        if(pumps!=null&&pumps.size()>0){
-////            System.out.println("at-entropy-------------createNodeKGBase1re begin at:"+DateUtils.dateToString(new Date(), 3));
-//            kgFusionService.createNodeKGBase1re(pumps);
-////            System.out.println("ate-kg createLineKGBase1 begin at:"+DateUtils.dateToString(new Date(), 3));
-//            kgFusionService.createLineKGBase1(pumps);
-//        }
-////        System.out.println("ate-kg all action end at:"+DateUtils.dateToString(new Date(), 3));
-    }
 
 
     /**
@@ -119,9 +94,9 @@ public class FusionController {
             String username  = userLogicService.findUserByCookies(userc);
             if(username!=null&&!"".equals(username)){
                 modelMap.put("usern",username);
-                userLogicService.createTemplate(modelMap);
+                userLogicService.createModel(modelMap);
             }else{
-                msg.put("error", "未检索到当前用户_saveModel_123");
+                msg.put("error", "未检索到当前用户_saveModel_99");
             }
         }else{
             msg.put("error", "未登录，请先登录:"+userc);

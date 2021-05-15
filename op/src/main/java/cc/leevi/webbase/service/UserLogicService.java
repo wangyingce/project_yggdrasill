@@ -51,12 +51,12 @@ public class UserLogicService {
         neo4jJdbcTemplate.update(cql);
     }
 
-    public void createTemplate(Map propertiesMap) {
+    public void createModel(Map propertiesMap) {
         String usern  = String.valueOf(propertiesMap.get("usern"));
-        String tname  = String.valueOf(propertiesMap.get("modelname"));
-        String tcql = "CREATE(n:template {name:'" + tname +"'})";
-        neo4jJdbcTemplate.update(tcql);
-        String lCql =  "MATCH (aa:user {name:'"+usern+"'}), (bb:template {name:'"+tname+"'}) \n" +
+        String model  = String.valueOf(propertiesMap.get("modelname"));
+        String ncql = "CREATE(n:model {name:'" + model +"'})";
+        neo4jJdbcTemplate.update(ncql);
+        String lCql =  "MATCH (aa:user {name:'"+usern+"'}), (bb:model {name:'"+model+"'}) \n" +
                           "MERGE (aa) -[:own]-> (bb)";
         neo4jJdbcTemplate.update(lCql);
     }
@@ -73,7 +73,7 @@ public class UserLogicService {
 //        return neo4jJdbcTemplate.queryForList("MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return u.name,u.phone,t.name,t.remark");
     }
 
-    public List<Map<String, Object>> queryTemplateCookies(String property) {
+    public List<Map<String, Object>> queryModelCookies(String property) {
         String temCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return t";
         return neo4jJdbcTemplate.queryForList(temCql);
     }

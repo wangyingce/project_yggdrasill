@@ -55,40 +55,39 @@ public class UserLogicController {
         return msg;
     }
 
-    @RequestMapping("/createTemplate")
-    public Map<String, String> createTemplate(@RequestParam(value = "properties") String properties) throws Exception {
-//    public Map<String, String> createTemplate(String properties) throws Exception {
-        Map<String, String> msg = new HashedMap();
-        if (properties == null || "".equals(properties)) {
-            msg.put("error", "createTemplate入参为空");
-        }
-        Map propertiesMap = JSON.parseObject(properties);
-        userLogicService.createTemplate(propertiesMap);
-        msg.put("sus", "createTemplate成功");
-        return msg;
-    }
+//    @RequestMapping("/createTemplate")
+//    public Map<String, String> createTemplate(@RequestParam(value = "properties") String properties) throws Exception {
+//        Map<String, String> msg = new HashedMap();
+//        if (properties == null || "".equals(properties)) {
+//            msg.put("error", "createTemplate入参为空");
+//        }
+//        Map propertiesMap = JSON.parseObject(properties);
+//        userLogicService.createTemplate(propertiesMap);
+//        msg.put("sus", "createTemplate成功");
+//        return msg;
+//    }
 
     @RequestMapping("/initUserInfo")
-    public Map<String, String> initUserInfo(@RequestParam(value = "property") String property) throws Exception {
+    public Map<String, String> initUserInfo(@RequestParam(value = "property") String userc) throws Exception {
     //test,property
 //    public Map<String, String> initUserInfo(String property) throws Exception {
 //        property = "cd25464c7e724c289382bbf260ca21f0";
         Map<String, String> msg = new HashedMap();
-        if(property==null||"".equals(property)||"undefined".equals(property)){
+        if(userc==null||"".equals(userc)||"undefined".equals(userc)){
             msg.put("error", "请先登录");
         }else{
-            List<Map<String, Object>> userlist =  userLogicService.queryNodeUserByCookies(property);
+            List<Map<String, Object>> userlist =  userLogicService.queryNodeUserByCookies(userc);
             if(userlist!=null&&userlist.size()>0){
                 for(Map<String, Object> user :userlist){
                     msg.put("user",user.get("u").toString());
                 }
-                List<Map<String, Object>> temlist =  userLogicService.queryTemplateCookies(property);
-                if(temlist!=null&&temlist.size()>0){
-                    String templateJson = "";
-                    for(Map<String, Object> tem :temlist){
-                        templateJson = templateJson + tem.get("t").toString()+",";
+                List<Map<String, Object>> modellist =  userLogicService.queryModelCookies(userc);
+                if(modellist!=null&&modellist.size()>0){
+                    String modelJson = "";
+                    for(Map<String, Object> model :modellist){
+                        modelJson = modelJson + model.get("m").toString()+",";
                     }
-                    msg.put("template",templateJson.substring(0,templateJson.length()-1));
+                    msg.put("model",modelJson.substring(0,modelJson.length()-1));
                 }
                 msg.put("sus", "initUserInfo成功");
             }else{

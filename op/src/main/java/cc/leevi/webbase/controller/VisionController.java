@@ -5,6 +5,7 @@ import cc.leevi.webbase.service.KgFusionService;
 import cc.leevi.webbase.service.KgInferenceService;
 import cc.leevi.webbase.service.KgVisionService;
 import cc.leevi.webbase.constants.KGConstants;
+import cc.leevi.webbase.service.UserLogicService;
 import cc.leevi.webbase.utils.TokenUtils;
 import cc.leevi.webbase.vo.KgspInfoVo;
 import cc.leevi.webbase.vo.KgspVo;
@@ -30,6 +31,8 @@ import static com.alibaba.fastjson.JSON.toJSON;
 public class VisionController {
     @Autowired
     private KgVisionService kgVisionService;
+    @Autowired
+    private UserLogicService userLogicService;
     private Map<String,String> nodeIdMap =new HashMap<String,String>(0);//去重节点id
     private Map<String,String> edgeIdMap =new HashMap<String,String>(0);//去重关系id
     Map<String, String> nodeTypeMap = new HashMap <>();
@@ -49,16 +52,23 @@ public class VisionController {
     }
 
     @GetMapping("visionAllData")
-    public Object visionAllData(String templateName,String para2, String para3) throws Exception {
+    public Object visionAllData(String userc,String model) throws Exception {
         Map<String, String> message = new HashedMap();
-        if (templateName == null || templateName == "") {
-            message.put("error", "error:templateName为null");
+        String usern  = userLogicService.findUserByCookies(userc);
+        /**比对cookie校验用户**/
+        if(usern==null||"".equals(usern)||"undefined"==usern){
+            message.put("error", "用户失效，请重新登录");
             return toJSON(message);
         }
+        if (model == null || model == "") {
+            message.put("error", "e:model为null");
+            return toJSON(message);
+        }
+
         Map<String, List<Map<String, Object>>> stdjsMap = new HashedMap();
-        List<Map<String, Object>> allTemplateData = kgVisionService.findAllDataByTemplateName(templateName);
+        List<Map<String, Object>> allTemplateData = kgVisionService.findKgByUsernModel(usern,model);
         if (allTemplateData == null || allTemplateData.size() <= 0) {
-            message.put("error", "error:未查询到任何数据");
+            message.put("error", "e:usern+model未查询到任何数据");
             return toJSON(message);
         }
         String dataGroup = JSON.toJSONString(allTemplateData);
