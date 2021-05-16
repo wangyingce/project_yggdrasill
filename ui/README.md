@@ -1,4 +1,4 @@
-# zstp
+# yggdrasill_ui
 
 ## Project setup
 ```
