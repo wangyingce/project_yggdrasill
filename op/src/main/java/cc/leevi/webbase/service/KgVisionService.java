@@ -72,6 +72,10 @@ public class KgVisionService {
      * @return
      */
     public List<Map<String, Object>> findKgByUsernModel(String usern, String model) {
-        return neo4jJdbcTemplate.queryForList(Neo4jOperationUtils.getNeo4jDataByUsernTame(usern,model));
+        return neo4jJdbcTemplate.queryForList(Neo4jOperationUtils.getNeo4jDataByUsernModel(usern,model));
+    }
+
+    public List<Map<String, Object>> findKgByUsern(String usern) {
+        return neo4jJdbcTemplate.queryForList(Neo4jOperationUtils.getNeo4jDataByUsern(usern));
     }
 }

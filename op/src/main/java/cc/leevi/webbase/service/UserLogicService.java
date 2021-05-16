@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
 
+import static com.alibaba.fastjson.JSON.toJSON;
+
 @Service
 @Transactional
 public class UserLogicService {

@@ -38,18 +38,37 @@ public class VisionController {
     Map<String, String> nodeTypeMap = new HashMap <>();
     Integer nodeColor = 1;
 
-    @GetMapping("showGraph")
-    public Object showGraph(String insuredName, String insuredCode, String token) throws Exception{
-        if(TokenUtils.base1TokenValid(token)){
-            /**去重获取图谱数据**/
-            /**组建客户画像**/
-        }else{
-            Map<String,String> error= new HashedMap();
-            error.put("error","令牌错误");
-            return toJSON(error);
+//    @GetMapping("showGraph")
+//    public Object showGraph(String insuredName, String insuredCode, String token) throws Exception{
+//        if(TokenUtils.base1TokenValid(token)){
+//            /**去重获取图谱数据**/
+//            /**组建客户画像**/
+//        }else{
+//            Map<String,String> error= new HashedMap();
+//            error.put("error","令牌错误");
+//            return toJSON(error);
+//        }
+//        return null;
+//    }
+
+    @GetMapping("showUserKg")
+    public Object showUserKg(String userc) throws Exception {
+        Map<String, String> msg = new HashedMap();
+        /**校验用户有效性**/
+        String usern  = userLogicService.findUserByCookies("7c3940474050424682c42a31e1b25380");
+        if(usern==null||"".equals(usern)||"undefined"==usern){
+            return toJSON(msg.put("error", "用户失效，请重新登录"));
         }
-        return null;
+        /**组织数据**/
+        List<Map<String, Object>> usernKg = kgVisionService.findKgByUsern(usern);
+        if (usernKg == null || usernKg.size() <= 0) {
+            msg.put("error", "e:usern+model未查询到任何数据");
+            return toJSON(msg);
+        }
+        return StructuredData(usernKg);
     }
+
+
 
     @GetMapping("visionAllData")
     public Object visionAllData(String userc,String model) throws Exception {
@@ -71,7 +90,29 @@ public class VisionController {
             message.put("error", "e:usern+model未查询到任何数据");
             return toJSON(message);
         }
-        String dataGroup = JSON.toJSONString(allTemplateData);
+        return StructuredData(allTemplateData);
+//        String dataGroup = JSON.toJSONString(allTemplateData);
+//        JSONArray datasList = (JSONArray) JSONArray.parse(dataGroup);
+//        for(Object obj : datasList){
+//            JSONObject dataList = JSON.parseObject(String.valueOf(obj));
+//            Iterator iterator = dataList.keySet().iterator();
+//            while(iterator.hasNext()){
+//                JSONArray jsonsList = dataList.getJSONArray(String.valueOf(iterator.next()));
+//                for(Object json : jsonsList){
+//                    JSONObject inputJson = JSON.parseObject(String.valueOf(json));
+//                    getStandardJson(stdjsMap,inputJson);
+//                }
+//            }
+//        }
+//        nodeIdMap.clear();
+//        edgeIdMap.clear();
+//        return toJSON(stdjsMap);
+    }
+
+    private Object StructuredData(List<Map<String, Object>> paraMap) {
+        /**创建结果数据容器*/
+        Map<String, List<Map<String, Object>>> rstMap = new HashedMap();
+        String dataGroup = JSON.toJSONString(paraMap);
         JSONArray datasList = (JSONArray) JSONArray.parse(dataGroup);
         for(Object obj : datasList){
             JSONObject dataList = JSON.parseObject(String.valueOf(obj));
@@ -80,13 +121,15 @@ public class VisionController {
                 JSONArray jsonsList = dataList.getJSONArray(String.valueOf(iterator.next()));
                 for(Object json : jsonsList){
                     JSONObject inputJson = JSON.parseObject(String.valueOf(json));
-                    getStandardJson(stdjsMap,inputJson);
+                    /**标准化数据**/
+                    getStandardJson(rstMap,inputJson);
                 }
             }
         }
+        /**清空id容器**/
         nodeIdMap.clear();
         edgeIdMap.clear();
-        return toJSON(stdjsMap);
+        return toJSON(rstMap);
     }
 
     private void getStandardJson(Map<String, List<Map<String, Object>>> stdjsTopMap,JSONObject inputJson) {
