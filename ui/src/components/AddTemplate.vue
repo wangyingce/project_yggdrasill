@@ -183,6 +183,45 @@
         <el-button size="small" type="primary" @click="ok2()">保 存</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      class="dialog-index"
+      :visible="visible3"
+      title="保存模板"
+      :close-on-click-modal="false"
+      @close="close3"
+      destroy-on-close
+      width="400px"
+    >
+      <el-form
+        label-width="70px"
+        ref="modelform"
+        :model="modelForm"
+        :rules="modelRules"
+        size="mini"
+      >
+        <el-form-item label="节点名" prop="modelname">
+          <el-input
+            maxlength="50"
+            v-model="modelForm.modelname"
+            placeholder="请输入节点名"
+            @blur="setColor"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="模板说明" prop="remark">
+          <el-input
+            type="textarea"
+            maxlength="200"
+            v-model="modelForm.remark"
+            placeholder="请输入模板说明"
+            @blur="setColor"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="close3()">取 消</el-button>
+        <el-button size="small" type="primary" @click="ok3()">保 存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -209,6 +248,7 @@ export default {
     return {
       visible: false,
       visible2: false,
+      visible3: false,
       nodes: [],
       links: [],
       tempLinks: [],
@@ -242,6 +282,15 @@ export default {
         stroke: [
           { required: true, message: "请选择一个描边颜色", trigger: "change" },
         ],
+      },
+      modelForm: {
+        id: '',
+        modelname: '',
+        remark: '',
+      },
+      modelRules: {
+        modelname: [{ required: true, message: "请输入模板名", trigger: "blur" }],
+        remark: [{ required: true, message: "请输入模板说明", trigger: "blur" }],
       },
       svgFocus: false,
       d: null,
@@ -470,38 +519,70 @@ export default {
           this.$message.warning("所有节点都需要添加连接，请检查！");
           return;
         }
-        this.$prompt("请输入模板名", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          inputPattern: /.{0,50}?/,
-          inputErrorMessage: "模板名格式不正确",
-        })
-          .then(({ value }) => {
-            let data = {
-              userc: this.$cookies.get('ygg1412'),
-              modelname: value,
-              nodes: this.nodes,
-              edges: this.links,
-            };
-            console.log(data);
-            axios
-              .get(
-                "/saveModel?modelString=" +
-                  encodeURIComponent(JSON.stringify(data))
-              )
-              .then(function (response) {
-                this.$message.success("保存成功");
-                console.log(response);
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-            // 调接口
-          })
-          .catch(() => {});
+        this.visible3 = true
+        // this.$prompt("请输入模板名", "提示", {
+        //   confirmButtonText: "确定",
+        //   cancelButtonText: "取消",
+        //   inputPattern: /.{0,50}?/,
+        //   inputErrorMessage: "模板名格式不正确",
+        // })
+        //   .then(({ value }) => {
+        //     let data = {
+        //       userc: this.$cookies.get('ygg1412'),
+        //       modelname: value,
+        //       nodes: this.nodes,
+        //       edges: this.links,
+        //     };
+        //     console.log(data);
+        //     axios
+        //       .get(
+        //         "/saveModel?modelString=" +
+        //           encodeURIComponent(JSON.stringify(data))
+        //       )
+        //       .then(function (response) {
+        //         this.$message.success("保存成功");
+        //         console.log(response);
+        //       })
+        //       .catch(function (error) {
+        //         console.log(error);
+        //       });
+        //     // 调接口
+        //   })
+        //   .catch(() => {});
       } else {
         this.$message.warning("至少需要两个节点！");
       }
+    },
+    // open2() {
+    //   this.tempLinks = JSON.parse(JSON.stringify(this.links));
+    //   this.visible2 = true;
+    // },
+    close3() {
+      this.visible3 = false;
+    },
+    ok3() {
+      this.$refs.modelform.validate(v => {
+        if (v) {
+          let data = {
+            userc: this.$cookies.get('ygg1412'),
+            modelname: this.modelForm.modelname,
+            remark: this.modelForm.remark,
+            nodes: this.nodes,
+            edges: this.links,
+          };
+          axios
+            .get(
+              "/saveModel?modelString=" + encodeURIComponent(JSON.stringify(data))
+            )
+            .then(function () {
+              this.$message.success("保存成功");
+              this.close3()
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      }, () => {})
     },
     windowResize() {
       if (timer) clearTimeout(timer);

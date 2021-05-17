@@ -55,6 +55,22 @@ import DrawForce from "@/plugins/drawForce"
 import axios from 'axios'
 import NodeDialog from './NodeDialog'
 
+// 获取query并去重
+function getQuery(u) {
+  var a = (u || '').split('?')
+  if (a.length < 2) {
+    return {}
+  }
+  var aa = a[1]
+  var bb = aa.split('&')
+  var cc = {}
+  for (var b of bb) {
+    var c = b.split('=')
+    cc[c[0]] = c[1]
+  }
+  return cc
+}
+
 let timer
 export default {
   name: "IndexPage",
@@ -179,8 +195,24 @@ export default {
       }, 300)
     },
     initData() {
-       let vm = this
-      axios.get('/visionAllData' + location.search)
+      let vm = this
+      let query = getQuery(location.href)
+      if (query.model) {
+        axios.get('/showUserModelKg' + location.search)
+          .then(function (response) {
+            if(response.status != 200 || response.data.error) {
+              vm.$message.error(response.data.error || response.statusText)
+              return
+            }
+            let json = response.data
+            vm.setData(json)
+          })
+          .catch(function (error) {
+            console.log(error)
+          });
+        return
+      }
+      axios.get('/showUserKg' + location.search)
       .then(function (response) {
         if(response.status != 200 || response.data.error) {
           vm.$message.error(response.data.error || response.statusText)
