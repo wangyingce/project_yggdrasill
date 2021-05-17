@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.alibaba.fastjson.JSON.toJSON;
 
 @RestController
 @RequestMapping
@@ -68,11 +71,11 @@ public class UserLogicController {
 //    }
 
     @RequestMapping("/initUserInfo")
-    public Map<String, String> initUserInfo(@RequestParam(value = "property") String userc) throws Exception {
+    public Object initUserInfo(@RequestParam(value = "property") String userc) throws Exception {
     //test,property
 //    public Map<String, String> initUserInfo(String property) throws Exception {
 //        property = "cd25464c7e724c289382bbf260ca21f0";
-        Map<String, String> msg = new HashedMap();
+        Map<String, Object> msg = new HashedMap();
         if(userc==null||"".equals(userc)||"undefined".equals(userc)){
             msg.put("error", "请先登录");
         }else{
@@ -81,20 +84,20 @@ public class UserLogicController {
                 for(Map<String, Object> user :userlist){
                     msg.put("user",user.get("u").toString());
                 }
-                List<Map<String, Object>> modellist =  userLogicService.queryModelCookies(userc);
-                if(modellist!=null&&modellist.size()>0){
-                    String modelJson = "";
-                    for(Map<String, Object> model :modellist){
-                        modelJson = modelJson + model.get("m").toString()+",";
+                List<Map<String, Object>> mlist =  userLogicService.queryModelCookies(userc);
+                if(mlist!=null&&mlist.size()>0){
+                    List<Object> modeList = new ArrayList<>();
+                    for(Map<String, Object> m :mlist){
+                        modeList.add(m.get("m"));
                     }
-                    msg.put("model",modelJson.substring(0,modelJson.length()-1));
+                    msg.put("model",modeList);
                 }
                 msg.put("sus", "initUserInfo成功");
             }else{
                 msg.put("error", "initUserInfo未查询到用户信息");
             }
         }
-        return msg;
+        return toJSON(msg);
     }
 
 }
