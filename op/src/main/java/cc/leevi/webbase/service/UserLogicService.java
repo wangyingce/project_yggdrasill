@@ -76,7 +76,7 @@ public class UserLogicService {
     }
 
     public List<Map<String, Object>> queryModelCookies(String property) {
-        String temCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(t:template) return t";
+        String temCql = "MATCH (u:user {"+UUIDUtils.usercId+":'"+property+"'})-[res]->(m:model) return m";
         return neo4jJdbcTemplate.queryForList(temCql);
     }
 

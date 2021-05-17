@@ -55,7 +55,7 @@ public class VisionController {
     public Object showUserKg(String userc) throws Exception {
         Map<String, String> msg = new HashedMap();
         /**校验用户有效性**/
-        String usern  = userLogicService.findUserByCookies("7c3940474050424682c42a31e1b25380");
+        String usern  = userLogicService.findUserByCookies(userc);
         if(usern==null||"".equals(usern)||"undefined"==usern){
             return toJSON(msg.put("error", "用户失效，请重新登录"));
         }
@@ -68,10 +68,35 @@ public class VisionController {
         return StructuredData(usernKg);
     }
 
+    @GetMapping("showUserModelKg")
+    public Object showUserModelKg(String userc,String model) throws Exception {
+        Map<String, String> msg = new HashedMap();
+        /**校验user&model有效性**/
+        String usern  = userLogicService.findUserByCookies(userc);
+        if(usern==null||"".equals(usern)||"undefined"==usern){
+            return toJSON(msg.put("error", "用户失效，请重新登录"));
+        }
+        if (model == null || model == "") {
+            msg.put("error", "e:model为null");
+            return toJSON(msg);
+        }
+        /**组织数据**/
+        List<Map<String, Object>> usernModelKg = kgVisionService.findKgByUsernModel(usern,model);
+        if (usernModelKg == null || usernModelKg.size() <= 0) {
+            msg.put("error", "e:uusernModelKg未查询到任何数据");
+            return toJSON(msg);
+        }
+        return StructuredData(usernModelKg);
+    }
+
+
 
 
     @GetMapping("visionAllData")
     public Object visionAllData(String userc,String model) throws Exception {
+        /**test 20210517 wyc**/
+//        userc= "39e9180c50d1445d98f7198b0dcc9c2a";
+//        model = "火地系统";
         Map<String, String> message = new HashedMap();
         String usern  = userLogicService.findUserByCookies(userc);
         /**比对cookie校验用户**/
@@ -84,7 +109,6 @@ public class VisionController {
             return toJSON(message);
         }
 
-        Map<String, List<Map<String, Object>>> stdjsMap = new HashedMap();
         List<Map<String, Object>> allTemplateData = kgVisionService.findKgByUsernModel(usern,model);
         if (allTemplateData == null || allTemplateData.size() <= 0) {
             message.put("error", "e:usern+model未查询到任何数据");
