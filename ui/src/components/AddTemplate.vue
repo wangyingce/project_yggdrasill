@@ -65,11 +65,11 @@
         :rules="tagRules"
         size="mini"
       >
-        <el-form-item label="节点名" prop="type">
+        <el-form-item label="节点类型" prop="type">
           <el-input
             maxlength="50"
             v-model="tagform.type"
-            placeholder="请输入节点名"
+            placeholder="请输入节点类型"
             @blur="setColor"
           ></el-input>
         </el-form-item>
@@ -199,11 +199,11 @@
         :rules="modelRules"
         size="mini"
       >
-        <el-form-item label="节点名" prop="modelname">
+        <el-form-item label="节点类型" prop="modelname">
           <el-input
             maxlength="50"
             v-model="modelForm.modelname"
-            placeholder="请输入节点名"
+            placeholder="请输入节点类型"
             @blur="setColor"
           ></el-input>
         </el-form-item>
@@ -275,7 +275,7 @@ export default {
         type: "",
       },
       tagRules: {
-        type: [{ required: true, message: "请输入节点名", trigger: "blur" }],
+        type: [{ required: true, message: "请输入节点类型", trigger: "blur" }],
         fill: [
           { required: true, message: "请选择一个填充颜色", trigger: "change" },
         ],
@@ -355,7 +355,7 @@ export default {
         if (valid) {
           let d = this.tagform;
           if (/^\d+/.test(d.type)) {
-            this.$message.warning("节点名不能以数字为开头");
+            this.$message.warning("节点类型不能以数字为开头");
             return;
           }
           if (this.$refs.inputProp.emitInput()) {
@@ -384,7 +384,7 @@ export default {
             for (let i = 0; i < this.nodes.length; i++) {
               const it = this.nodes[i];
               // if (!d.id && this.nodes[i].type == d.type) {
-              //   this.$message.warning('节点名已存在')
+              //   this.$message.warning('节点类型已存在')
               //   return
               // }
               if (it.id == d.id) {
@@ -570,19 +570,21 @@ export default {
             nodes: this.nodes,
             edges: this.links,
           };
-          axios
-            .get(
-              "/saveModel?modelString=" + encodeURIComponent(JSON.stringify(data))
-            )
-            .then(function () {
-              this.$message.success("保存成功");
-              this.close3()
+          axios.get("/saveModel?modelString=" + encodeURIComponent(JSON.stringify(data)))
+            .then(function (response) {
+              if(response.status != 200 || response.data.error) {
+                this.$message.error(response.data.error || response.statusText)
+                return
+              }
             })
             .catch(function (error) {
               console.log(error);
             });
         }
-      }, () => {})
+      }, () => {});
+      this.$message.success("保存成功");
+      this.close3();
+      location.href = '/index.html#Query';
     },
     windowResize() {
       if (timer) clearTimeout(timer);

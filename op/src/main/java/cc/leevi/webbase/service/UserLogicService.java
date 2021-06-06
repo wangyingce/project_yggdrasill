@@ -56,9 +56,11 @@ public class UserLogicService {
     public void createModel(Map propertiesMap) {
         String usern  = String.valueOf(propertiesMap.get("usern"));
         String model  = String.valueOf(propertiesMap.get("modelname"));
-        String ncql = "CREATE(n:model {name:'" + model +"'})";
+        String remark  = String.valueOf(propertiesMap.get("remark"));
+
+        String ncql = "CREATE(n:model {name:'" + model +"',remark:'" + remark + "'})";
         neo4jJdbcTemplate.update(ncql);
-        String lCql =  "MATCH (aa:user {name:'"+usern+"'}), (bb:model {name:'"+model+"'}) \n" +
+        String lCql =  "MATCH (aa:user {name:'"+usern+"'}), (bb:model {name:'"+model+"',remark:'" + remark + "'}) \n" +
                           "MERGE (aa) -[:own]-> (bb)";
         neo4jJdbcTemplate.update(lCql);
     }
