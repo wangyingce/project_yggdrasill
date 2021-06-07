@@ -15,14 +15,20 @@ module.exports = {
       filename: 'engine.html',
       // 当使用 title 选项时，
       // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
-      title: 'yggdrasill_engine',
+      title: 'engine',
     },
     template: {
       entry: 'src/pages/template/index.js',
       template: 'public/index.html',
       filename: 'model.html',
-      title: 'yggdrasill_model',
+      title: 'model',
     },
+    modtemplate: {
+       entry: 'src/pages/modtemplate/index.js',
+       template: 'public/index.html',
+       filename: 'modify.html',
+       title: 'modify',
+      },
   },
   devServer: {
     proxy: 'http://10.6.6.118:8080'
