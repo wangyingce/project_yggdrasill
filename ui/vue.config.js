@@ -18,20 +18,20 @@ module.exports = {
       title: 'engine',
     },
     template: {
-      entry: 'src/pages/template/index.js',
+      entry: 'src/pages/model/index.js',
       template: 'public/index.html',
       filename: 'model.html',
       title: 'model',
     },
-    modtemplate: {
-       entry: 'src/pages/modtemplate/index.js',
+    mod: {
+       entry: 'src/pages/mod/index.js',
        template: 'public/index.html',
-       filename: 'modify.html',
+       filename: 'mod.html',
        title: 'modify',
       },
   },
   devServer: {
-    proxy: 'http://10.6.6.118:8080'
+    proxy: 'http://localhost:8080'
   },
   configureWebpack : {
     plugins: [

@@ -230,11 +230,18 @@ import DrawForce from "@/plugins/drawForce";
 import axios from "axios";
 import InputProp from "./InputProp";
 
+function getParameter(name, search) {
+  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+  search = search || window.location.search
+  let r = search.substr(1).match(reg)
+  if (r != null) return unescape(r[2]); return null
+}
+
 let timer;
 let id = 1;
 let colori = 0;
 export default {
-  name: "ModTemplate",
+  name: "Model",
   inject: ["reload"],
   components: { InputProp },
   data() {
@@ -369,6 +376,10 @@ export default {
               this.$message.warning("properties至少需要录入一条内容");
               return;
             }
+            // if (!(d.properties||{}).name) {
+            //   this.$message.warning('请录入properties中name的值')
+            //   return
+            // }
             let index;
             for (let i = 0; i < this.nodes.length; i++) {
               const it = this.nodes[i];
@@ -509,10 +520,43 @@ export default {
           return;
         }
         this.visible3 = true
+        // this.$prompt("请输入模板名", "提示", {
+        //   confirmButtonText: "确定",
+        //   cancelButtonText: "取消",
+        //   inputPattern: /.{0,50}?/,
+        //   inputErrorMessage: "模板名格式不正确",
+        // })
+        //   .then(({ value }) => {
+        //     let data = {
+        //       userc: this.$cookies.get('ygg1412'),
+        //       modelname: value,
+        //       nodes: this.nodes,
+        //       edges: this.links,
+        //     };
+        //     console.log(data);
+        //     axios
+        //       .get(
+        //         "/saveModel?modelString=" +
+        //           encodeURIComponent(JSON.stringify(data))
+        //       )
+        //       .then(function (response) {
+        //         this.$message.success("保存成功");
+        //         console.log(response);
+        //       })
+        //       .catch(function (error) {
+        //         console.log(error);
+        //       });
+        //     // 调接口
+        //   })
+        //   .catch(() => {});
       } else {
         this.$message.warning("至少需要两个节点！");
       }
     },
+    // open2() {
+    //   this.tempLinks = JSON.parse(JSON.stringify(this.links));
+    //   this.visible2 = true;
+    // },
     close3() {
       this.visible3 = false;
     },
@@ -558,42 +602,38 @@ export default {
       this.d.highlightObject();
       this.svgFocus = false;
     },
-    setData(data){
-      let vm = this
-      let nodes = data.nodes || []
-      let links = data.edges || []
-      let tags = {}
-      nodes.forEach((element) => {
-        if (element.type) {
-          tags[element.type] = tags[element.type] || []
-          tags[element.type].push(element)
-          element.typeKey = tags[element.type][0].id // 取第一个id当相同的key
-        }
-      });
-      vm.nodes = nodes
-      vm.links = links
-      vm.tags = tags
-      vm.startD3(nodes, links, tags)
+    setData() {
+      this.nodes = [];
+      this.links = [];
+      this.startD3(this.nodes, this.links);
     },
-    initData() {
+    initData(id) {
       let vm = this
-      axios.get('/showUserModelKg' + location.search)
-              .then(function (response) {
-                if(response.status != 200 || response.data.error) {
-                  vm.$message.error(response.data.error || response.statusText)
-                  return
-                }
-                let json = response.data
-                vm.setData(json)
-              })
-              .catch(function (error) {
-                console.log(error)
-              });
-      return
-    },
+      axios
+        .get("/getModelData?mid=" + id)
+        .then(function (response) {
+          if(response.status != 200 || response.data.error) {
+            vm.$message.error(response.data.error || response.statusText)
+            return
+          }
+          let data = response.data
+          vm.nodes = data.nodes || []
+          vm.links = data.links || []
+          vm.startD3(vm.nodes, vm.links);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  },
+  created() {
+    let mid = getParameter('mid', location.search)
+    if (mid) {
+      this.initData(mid)
+    }
   },
   mounted() {
-    this.initData();
+    this.setData();
     window.addEventListener("resize", this.windowResize);
   },
   destroyed() {

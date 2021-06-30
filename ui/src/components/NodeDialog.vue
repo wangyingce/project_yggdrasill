@@ -110,6 +110,11 @@ export default {
                 p[vm.getKey(key)] = vm.form.properties[key];
               }
             }
+            this.sensors.track({
+              l:"save",
+              k
+
+            })
             axios
               .get("/updateNode", {
                 params: {

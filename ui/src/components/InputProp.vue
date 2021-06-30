@@ -11,7 +11,7 @@
         <el-input v-model="v.value" placeholder="请输入value"></el-input>
       </el-col>
       <el-col :span="2" style="text-align:right;">
-        <el-button :disabled="values.length < 2" type='text' style="margin-left:5px;" @click="del(i)">删除</el-button>
+        <el-button :disabled="values.length < 2" type='text' style="margin-left:5px;" @click="del(v.key)">删除</el-button>
       </el-col>
     </el-row>
     
@@ -26,7 +26,8 @@
 </template>
 
 <script>
-export default {
+  import axios from "axios";
+  export default {
   name: "input-prop",
   props: {
     value: Object,
@@ -39,7 +40,8 @@ export default {
       default: ()=>{
         return []
       }
-    }
+    },
+    nid:String
   },
   data() {
     return {
@@ -98,6 +100,22 @@ export default {
       this.values.push({key:'',value: ''})
     },
     del(i) {
+      let vm = this;
+      this.$message.error(this.nid)
+      axios.get("/delNodeProperty", {
+                params: {
+                  id: vm.nid,
+                  property: i
+                },
+              }).then(function (response) {
+                if(response.status != 200 || response.data.error) {
+                  vm.$message.error(response.data.error || response.statusText)
+                  return
+                }
+                vm.$message.success("删除成功");
+              }).catch(function (error) {
+                console.log(error)
+              });
       this.values.splice(i, 1)
     }
   }

@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <AddTemplate v-if="isShow && isLogin" />
+    <Model v-if="isShow && isLogin" />
   </div>
 </template>
 
 <script>
-import AddTemplate from '../../components/AddTemplate.vue'
+import Model from '../../components/Model.vue'
 import comjs from '../../common'
 
 export default {
   name: 'app',
   components: {
-    AddTemplate
+    Model
   },
   provide(){
     return {
