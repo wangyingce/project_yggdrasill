@@ -19,6 +19,9 @@ spring:
 
 neo4j:
   datasource:
+#    url: jdbc:neo4j:bolt://10.6.6.118:7687
+#    url: jdbc:neo4j:bolt://192.168.103.218:7687
+#    url: jdbc:neo4j:bolt://10.0.0.219:7687
     url: jdbc:neo4j:bolt://localhost:7687
     username: neo4j
     password: 'remark'

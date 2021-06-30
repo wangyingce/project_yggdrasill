@@ -1,14 +1,8 @@
 package cc.leevi.webbase.controller;
 
 import cc.leevi.webbase.constants.KGConstants;
-import cc.leevi.webbase.service.KgFusionService;
-import cc.leevi.webbase.service.KgInferenceService;
 import cc.leevi.webbase.service.KgVisionService;
-import cc.leevi.webbase.constants.KGConstants;
 import cc.leevi.webbase.service.UserLogicService;
-import cc.leevi.webbase.utils.TokenUtils;
-import cc.leevi.webbase.vo.KgspInfoVo;
-import cc.leevi.webbase.vo.KgspVo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -17,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.*;
+
 import static com.alibaba.fastjson.JSON.toJSON;
 
 
@@ -83,7 +79,7 @@ public class VisionController {
         /**组织数据**/
         List<Map<String, Object>> usernModelKg = kgVisionService.findKgByUsernModel(usern,model);
         if (usernModelKg == null || usernModelKg.size() <= 0) {
-            msg.put("error", "e:uusernModelKg未查询到任何数据");
+            msg.put("error", "e:usernModelKg未查询到任何数据");
             return toJSON(msg);
         }
         return StructuredData(usernModelKg);
@@ -196,6 +192,7 @@ public class VisionController {
                 }else{
                     styles.put("fill",nodeTypeMap.get(nodeType));
                 }
+//                propertiesMap.put("type",nodeType);
                 propertiesMap.put("name",nodeValue);
 
                 nodeMap.put("style",styles);

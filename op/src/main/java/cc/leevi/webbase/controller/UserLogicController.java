@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
